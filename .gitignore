@@ -3,4 +3,10 @@ node_modules/
 
 # Environments
 .env
-.env.*
+*env.*
+
+# Logs
+*.log
+
+# Build Files
+dist/
