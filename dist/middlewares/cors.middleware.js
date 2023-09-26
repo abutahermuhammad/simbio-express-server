@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const cors_1 = __importDefault(require("cors"));
-const origins = ['http://localhost:3000']; // List of allowed origins
-const methods = ['GET', 'POST', 'PUT', 'DELETE']; // List of allowed HTTP methods
+const origins = ['http://localhost:3000', '0.0.0.0']; // List of allowed origins
+const methods = ['GET', 'POST', 'PATCH', 'DELETE']; // List of allowed HTTP methods
 /**
  * CORS Middleware
  *

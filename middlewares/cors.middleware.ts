@@ -1,8 +1,8 @@
 import cors from 'cors';
 
 
-const origins = ['http://localhost:3000']; // List of allowed origins
-const methods = ['GET', 'POST', 'PUT', 'DELETE']; // List of allowed HTTP methods
+const origins = ['http://localhost:3000', '0.0.0.0']; // List of allowed origins
+const methods = ['GET', 'POST', 'PATCH', 'DELETE']; // List of allowed HTTP methods
 
 
 /**
