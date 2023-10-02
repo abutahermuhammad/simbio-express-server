@@ -1,0 +1,594 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  FEMALE
+  MALE
+  TRANS
+}
+
+enum FacilityType {
+  HOSPITAL
+  CLINIC
+  OTHER
+}
+
+model Ambulance {
+  id             Int           @id @default(autoincrement())
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @updatedAt
+  belong_to      Organization? @relation(fields: [organizationId], references: [id]) // Owner Organization
+  vehicle_number String        @db.VarChar(10)
+  ambulance_type String?       @db.VarChar(50) // Types are Freezer, Normal Ambulance, etc.
+  driver         Person        @relation(fields: [personId], references: [id]) // Driver information
+  personId       Int
+  version        String?       @default("v1-alpha") // Version number to manage schema updates
+  organizationId Int?
+}
+
+model BloodCenter {
+  id             Int       @id @default(autoincrement())
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+  established_at DateTime
+  founder        Person?   @relation(fields: [personId], references: [id])
+  contact        Contact?  @relation(fields: [contactId], references: [id])
+  location       Location? @relation(fields: [locationId], references: [id])
+  version        String?   @default("v1-alpha")
+  personId       Int?
+  contactId      Int?
+  locationId     Int?
+}
+
+model Club {
+  id             Int            @id @default(autoincrement())
+  created_at     DateTime       @default(now())
+  updated_at     DateTime       @updatedAt
+  name           String         @db.VarChar(255)
+  established_at DateTime       @db.Timestamp(6)
+  founder        String         @db.VarChar(8)
+  chairman       String         @db.VarChar(8)
+  vice_chairman  String         @db.VarChar(8)
+  contact        Contact        @relation(fields: [contact_id], references: [id])
+  contact_id     Int
+  version        String?        @default("v1-alpha")
+  Organization   Organization[]
+  member_list    Member[]
+  Person         Person?        @relation(fields: [person_id], references: [id])
+  person_id      Int?
+}
+
+model Contact {
+  id             Int           @id @default(autoincrement())
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @updatedAt
+  address_line_0 String        @db.VarChar(255)
+  address_line_1 String        @db.VarChar(255)
+  state          String        @db.VarChar(32)
+  city           String        @db.VarChar(32)
+  zip            String        @db.VarChar(15)
+  country        String        @db.VarChar(32)
+  phone          String        @db.VarChar(15)
+  phone_1        String        @db.VarChar(15)
+  fax            String        @db.VarChar(15)
+  email          String        @db.VarChar(100)
+  email_1        String?       @db.VarChar(100)
+  website        String?       @db.VarChar(100)
+  social_media   Json?
+  // persons        Person[]
+  // clubs          Club[]
+  // hospitals      Hospital[] // Renamed relationship for clarity
+  version        String?       @default("v1-alpha")
+  // Persons        Persons[]
+  Person         Person[]
+  Hospital       Hospital[]
+  Club           Club[]
+  BloodCenter    BloodCenter[]
+}
+
+model Location {
+  id          Int           @id @default(autoincrement())
+  latitude    Float
+  longitude   Float
+  Hospital    Hospital[]
+  BloodCenter BloodCenter[]
+}
+
+model Donation {
+  id             Int          @id @default(autoincrement())
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
+  amount         Int          @default(0) // Fund amount
+  date           DateTime // Fund collection date
+  person         Person       @relation(fields: [personId], references: [id]) // Donor profile
+  organization   Organization @relation(fields: [organizationId], references: [id]) // Organization where the fund belong.
+  volunteer      Member       @relation(fields: [memberId], references: [id]) // Refferal or fund collector
+  version        String?      @default("v1-alpha") // Databse schema version
+  personId       Int
+  organizationId Int
+  memberId       Int
+}
+
+model Member {
+  id                 Int        @id @default(autoincrement())
+  created_at         DateTime   @default(now())
+  updated_at         DateTime   @updatedAt
+  person             Person?    @relation(fields: [personId], references: [id])
+  medicalConditions  String?    @db.Text // Medical conditions that may impact eligibility to donate blood
+  medications        String?    @db.Text // List of medications and their purpose
+  allergies          String?    @db.Text // Known allergies to medications, food, or substances used during blood donation
+  infectiousDiseases String?    @db.Text // History of infectious diseases diagnosis or treatment
+  bloodDisorders     String?    @db.Text // History of blood disorders or iron deficiency
+  lastBloodDonation  DateTime? // Date of last blood donation
+  complications      String?    @db.Text // Complications during or after the last blood donation
+  version            String?    @default("v1-alpha")
+  personId           Int?
+  Donation           Donation[]
+  Club               Club?      @relation(fields: [clubId], references: [id])
+  clubId             Int?
+  Request            Request[]
+}
+
+enum BloodGroup {
+  A_POS
+  A_NEG
+  B_POS
+  B_NEG
+  AB_POS
+  AB_NEG
+  O_POS
+  O_NEG
+}
+
+model Request {
+  id               Int        @id @default(autoincrement())
+  created_at       DateTime   @default(now())
+  updated_at       DateTime   @updatedAt
+  referral         Member?    @relation(fields: [memberId], references: [id])
+  health_issue     String     @db.VarChar(255)
+  blood_group      BloodGroup @default(A_POS)
+  quantity         Int        @default(1)
+  donation_type    String     @db.VarChar(30)
+  datetime         DateTime   @default(now())
+  hospital_name    String     @db.VarChar(255)
+  hospital_address String     @db.VarChar(255)
+  hospital_phone   String     @db.VarChar(255)
+  hospital_email   String     @db.VarChar(255)
+  patient          Person     @relation(fields: [personId], references: [id])
+  version          String?    @default("v1-alpha")
+  memberId         Int?
+  personId         Int
+}
+
+model Support {
+  id             Int          @id @default(autoincrement())
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  version        String?      @default("v1-alpha")
+  organizationId Int
+}
+
+model Team {
+  id              Int          @id @default(autoincrement())
+  created_at      DateTime     @default(now())
+  updated_at      DateTime     @updatedAt
+  organization_id Organization @relation(fields: [organizationId], references: [id])
+  members         Person[]
+  start_date      DateTime // Operation date
+  end_date        DateTime // Operation end date
+  organizationId  Int // Oraganization ID
+  version         String?      @default("v1-alpha") // Database schema version
+}
+
+model User {
+  id                 Int                @id @default(autoincrement())
+  created_at         DateTime           @default(now())
+  updated_at         DateTime           @updatedAt
+  username           String?            @unique
+  email              String             @unique
+  password           String // Store securely hashed password
+  accountStatus      AccountStatus      @default(PENDING)
+  accountCreatedAt   DateTime           @default(now())
+  loginRecord        LoginRecord?       @relation(fields: [loginRecordId], references: [id])
+  person             Person             @relation(fields: [personId], references: [id])
+  // organization         Organization
+  registrationIP     String?
+  securityQuestions  SecurityQuestion[]
+  role               UserRole[]
+  twoFactorAuth      TwoFactorAuth?     @relation(fields: [twoFactorAuthId], references: [id])
+  socialMediaLinks   SocialMediaLinks?  @relation(fields: [socialMediaLinksId], references: [id])
+  twoFactorAuthId    Int?
+  socialMediaLinksId Int?
+  loginRecordId      Int?
+  personId           Int
+  UserSettings       UserSettings?      @relation(fields: [userSettingsId], references: [id])
+  userSettingsId     Int
+  version            String?            @default("v1-alpha")
+}
+
+model SecurityQuestion {
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  question   String
+  answer     String
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+}
+
+model UserRole {
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  role       String
+  userId     Int
+  // user   User   @relation(fields: [userId], references: [id])
+  User       User     @relation(fields: [userId], references: [id])
+}
+
+model TwoFactorAuth {
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  isEnabled  Boolean
+  secretKey  String?
+  userId     Int
+  // user      User    @relation(fields: [userId], references: [id])
+  User       User[]
+}
+
+model SocialMediaLinks {
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  facebook   String?
+  twitter    String?
+  instagram  String?
+  userId     Int
+  // user      User    @relation(fields: [userId], references: [id])
+  User       User[]
+}
+
+enum AccountStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  BANNED
+}
+
+enum AuthenticationMethod {
+  PASSWORD
+  TWO_FACTOR_AUTH
+  FACEBOOK
+  TWITTER
+  // Add more authentication methods as needed
+}
+
+model LoginRecord {
+  id              Int                   @id @default(autoincrement())
+  created_at      DateTime              @default(now())
+  updated_at      DateTime              @updatedAt
+  userId          Int // Reference to the user who performed the login
+  timestamp       DateTime // Date and time when the login occurred
+  ipAddress       String // IP address from which the login originated
+  userAgent       String // User agent string from the browser or device
+  loginStatus     String // Login status (e.g., 'success' or 'failed')
+  sessionId       String? // Session ID associated with the login
+  location        String? // Location information (e.g., city or country)
+  authentication  AuthenticationMethod? // Authentication method (enum)
+  deviceInfo      String? // Information about the device used for the login
+  securityTokens  String? // Security tokens or keys used during login
+  logoutTimestamp DateTime? // Date and time of user logout (if applicable)
+
+  version String? @default("v1-alpha")
+  // Additional metadata or custom fields as needed
+  // ...
+
+  // Define the user relation
+  // user            User     @relation(fields: [userId], references: [id])
+  User                 User[]
+  UserSettings         UserSettings[]
+  OrganizationSettings OrganizationSettings[]
+}
+
+model Person {
+  id           Int            @id @default(autoincrement())
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @updatedAt
+  avatar       String?
+  first_name   String         @db.VarChar(100)
+  last_name    String?        @db.VarChar(255)
+  father_name  String?        @db.VarChar(100)
+  mother_name  String?        @db.VarChar(100)
+  profession   String?        @db.VarChar(52)
+  nid          String?        @db.VarChar(52)
+  passport     String?        @db.VarChar(52)
+  driving      String?        @db.VarChar(52)
+  bid          String?        @db.VarChar(52) // Birth certificate ID
+  dob          DateTime? // Changed to a date type
+  gender       Gender? // Updated to use the Gender enum
+  contact      Contact        @relation(fields: [contact_id], references: [id])
+  version      String?        @default("v1-alpha")
+  contact_id   Int
+  User         User[]
+  Organization Organization[]
+  Team         Team?          @relation(fields: [teamId], references: [id])
+  teamId       Int?
+  Member       Member[]
+  Donation     Donation[]
+  Club         Club[]
+  BloodCenter  BloodCenter[]
+  Ambulance    Ambulance[]
+  Request      Request[]
+}
+
+model Hospital {
+  id                 Int          @id @default(autoincrement())
+  created_at         DateTime     @default(now())
+  updated_at         DateTime     @updatedAt
+  name               String       @db.VarChar(255)
+  founded_at         DateTime     @map("founded_at")
+  accreditation      String?      @db.VarChar(255)
+  bed_count          Int?         @db.Integer
+  emergency_room     Boolean      @db.Boolean
+  services           String[]
+  specialties        String[]
+  rating             Float?
+  facility_type      FacilityType // Make sure 'FacilityType' is defined as an enum
+  ownership          String?      @db.VarChar(255)
+  insurance_accepted String?      @db.VarChar(255)
+  operating_hours    String?      @db.Text
+  infrastructure     String?      @db.Text
+  security_controls  String?      @db.Text
+  version            String?      @default("v1-alpha")
+
+  location_id Int?
+  contact_id  Int?
+  founder_id  Int? // Reference to founder's ID in the Person table
+  director_id Int? // Reference to director's ID in the Person table
+  chairman_id Int? // Reference to chairman's ID in the Person table
+
+  // Relations
+  Contact  Contact?  @relation(fields: [contact_id], references: [id])
+  Location Location? @relation(fields: [location_id], references: [id])
+}
+
+enum Theme {
+  LIGHT
+  DARK
+}
+
+enum Language {
+  ENGLISH
+  BANGLA
+}
+
+enum TimeFormat {
+  // "12-hour format with AM/PM (e.g., 12:00 AM)"
+  H12AM
+
+  // "12-hour format with AM/PM (e.g., 12:00 PM)"
+  H12PM
+
+  // "24-hour format (e.g., 00:00)"
+  H24
+
+  // "24-hour format with seconds (e.g., 00:00:00)"
+  H24S
+
+  // "12-hour format without seconds (e.g., 12:00)"
+  H12NoS
+
+  // "24-hour format without seconds (e.g., 12:00:00)"
+  H24NoS
+
+  // "12-hour format with seconds and AM/PM (e.g., 12:00:00 AM)"
+  H12S_AM
+
+  // "12-hour format with seconds and AM/PM (e.g., 12:00:00 PM)"
+  H12S_PM
+
+  // "24-hour format with seconds and AM/PM (e.g., 00:00:00 AM)"
+  H24S_AM
+
+  // "24-hour format with seconds and AM/PM (e.g., 00:00:00 PM)"
+  H24S_PM
+}
+
+enum DateFormat {
+  YMD_HYPHEN // 2023-12-25
+  DMY_HYPHEN // 25-12-2023
+  MDY_SLASH // 12/25/2023
+  DMY_SLASH // 25/12/2023
+  MON_DY_COMMA // Dec 25, 2023
+  DY_MON_COMMA // 25 Dec, 2023
+  MONTH_DY_COMMA // December 25, 2023
+  DY_MONTH_COMMA // 25 December, 2023
+  MON_DY_SPACE // Dec 25 2023
+  DY_MON_SPACE // 25 Dec 2023
+}
+
+enum Timezone {
+  GMT_10_Hawaii
+  GMT_09_Alaska
+  GMT_08_Pacific_Time_US_Canada
+  GMT_07_Mountain_Time_US_Canada
+  GMT_06_Central_Time_US_Canada_Mexico_City
+  GMT_05_Eastern_Time_US_Canada_Bogota_Lima
+  GMT_04_Atlantic_Time_Canada_Caracas_La_Paz
+  GMT_03_30_Newfoundland
+  GMT_03_Buenos_Aires_Brasilia_Georgetown
+  GMT_02_Mid_Atlantic
+  GMT_01_Azores_Cape_Verde_Islands
+  GMT_00_Western_Europe_Time_London_Lisbon_Casablanca
+  GMT_01_Brussels_Copenhagen_Madrid_Paris
+  GMT_02_Athens_Bucharest_Istanbul
+  GMT_03_Moscow_St_Petersburg_Kuwait_Nairobi
+  GMT_03_30_Tehran
+  GMT_04_Abu_Dhabi_Muscat_Baku_Tbilisi
+  GMT_04_30_Kabul
+  GMT_05_Ekaterinburg_Islamabad_Karachi_Tashkent
+  GMT_05_30_Chennai_Kolkata_Mumbai_New_Delhi
+  GMT_05_45_Kathmandu
+  GMT_06_Astana_Dhaka_Almaty_Urumqi
+  GMT_06_30_Yangon_Cocos_Islands
+  GMT_07_Bangkok_Hanoi_Jakarta
+  GMT_08_Beijing_Perth_Singapore_Hong_Kong
+  GMT_09_Tokyo_Seoul_Osaka_Sapporo_Yakutsk
+  GMT_09_30_Adelaide_Darwin
+  GMT_10_Eastern_Australia_Guam_Vladivostok
+  GMT_11_Magadan_Solomon_Islands_New_Caledonia
+  GMT_12_Auckland_Wellington_Fiji_Kamchatka
+  GMT_13_Nuku_alofa
+}
+
+model UserSettings {
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  // General
+
+  // Language & DateTime
+  language    Language   @default(ENGLISH) // Allow users to select their preferred language
+  time_format TimeFormat @default(H12PM) // User date format preference (e.g., 'MM/DD/YYYY')
+  date_format DateFormat @default(DY_MONTH_COMMA) // User date format preference (e.g., 'MM/DD/YYYY')
+  timezone    Timezone   @default(GMT_06_Astana_Dhaka_Almaty_Urumqi) // User timezone preference
+
+  // Appearance
+  theme Theme? @default(LIGHT) // Allow users to select the application theme
+
+  // Notification
+  in_app_notifications   Boolean? @default(true) // Enable in-app notifications
+  notification_sound     String? // Notification sound preference
+  notification_vibrate   Boolean? @default(true) // Vibration for notifications
+  notification_frequency String? // Notification frequency preference
+  email_notifications    Boolean  @default(true) // Enable or disable email notifications
+  phone_notification     Boolean  @default(true)
+  push_notifications     Boolean  @default(true) // Allow users to receive push notifications
+
+  // Accessibility
+  high_contrast_mode Boolean? // Enable high contrast mode
+  key_board_shortcut Boolean? // Enable screen reader support
+
+  // Device
+  login_records LoginRecord @relation(fields: [loginRecordId], references: [id])
+  // deviceHistory      Boolean?  // Enable or disable device login history tracking
+
+  // Security
+  password_reset    Boolean? // Enable password reset options
+  security_question String? // Security question for account recovery
+  security_answer   String? // Security answer for account recovery
+  two_factor_auth   Boolean? // Enable or disable two-factor authentication
+
+  // Privacy & Data
+  // securityPolicies   Json?     // JSON field for security policy settings
+
+  // Help
+  // About
+
+  User            User[]
+  login_record_id Int
+  loginRecordId   Int
+}
+
+model OrganizationSettings {
+  id         Int      @id @default(autoincrement())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  // organization_id
+
+  // General displayName        String?   @db.VarChar(100)
+  username            String?  @db.VarChar(100)
+  avatar              String? // URL to user's profile picture
+  accountDeactivation Boolean? // Allow account deactivation
+
+  // Language & DateTime
+  language    Language   @default(ENGLISH) // Allow users to select their preferred language
+  time_format TimeFormat @default(H12PM) // User date format preference (e.g., 'MM/DD/YYYY')
+  date_format DateFormat @default(DY_MONTH_COMMA) // User date format preference (e.g., 'MM/DD/YYYY')
+  timezone    Timezone   @default(GMT_06_Astana_Dhaka_Almaty_Urumqi) // User timezone preference
+
+  // Appearance
+  theme Theme? @default(LIGHT) // Allow users to select the application theme
+
+  // Notification
+  in_app_notifications   Boolean? @default(true) // Enable in-app notifications
+  notification_sound     String? // Notification sound preference
+  notification_vibrate   Boolean? @default(true) // Vibration for notifications
+  notification_frequency String? // Notification frequency preference
+  email_notifications    Boolean  @default(true) // Enable or disable email notifications
+  phone_notification     Boolean  @default(true)
+  push_notifications     Boolean  @default(true) // Allow users to receive push notifications
+
+  // Accessibility
+  high_contrast_mode Boolean? // Enable high contrast mode
+  key_board_shortcut Boolean? // Enable screen reader support
+
+  // Device
+  // login_records LoginRecord @relation(fields: [loginRecordId], references: [id])
+  // deviceHistory      Boolean?  // Enable or disable device login history tracking
+
+  // Security
+  password_reset    Boolean? // Enable password reset options
+  security_question String? // Security question for account recovery
+  security_answer   String? // Security answer for account recovery
+  two_factor_auth   Boolean? // Enable or disable two-factor authentication
+
+  // Privacy & Data Settings
+  dataSharing       Boolean? // Allow data sharing with third parties
+  dataRetentionDays Int? // Number of days to retain data
+  clearBrowsingData Boolean? // Clear browsing data (cache, cookies, history)
+  // securityPolicies   Json?     // JSON field for security policy settings
+
+  // Help Settings
+  helpCenterLink     String? // URL to help center or documentation
+  contactSupportLink String? // URL to contact support or report issues
+
+  // About Settings
+
+  // Relationships
+  // organization Organization? @relation(fields: [organizationId], references: [id])
+
+  // Other potential relationships:
+  // - Notification preferences (Add relationship if needed)
+  // - Customization settings (Add relationship if needed)
+  // - Help and support preferences (Add relationship if needed)
+  // - About information (Add relationship if needed)
+
+  LoginRecord   LoginRecord?   @relation(fields: [loginRecordId], references: [id])
+  loginRecordId Int?
+  Organization  Organization[]
+}
+
+enum OrgType {
+  HOSPITAL
+  CLUB
+  CENTER
+}
+
+model Organization {
+  id                     Int                  @id @default(autoincrement())
+  created_at             DateTime             @default(now())
+  updated_at             DateTime             @updatedAt
+  org_type               OrgType
+  org_id                 Int
+  Ambassador             Person               @relation(fields: [personId], references: [id])
+  Volunteer              Json
+  settings               OrganizationSettings @relation(fields: [organizationSettingsId], references: [id])
+  personId               Int
+  organizationSettingsId Int
+  Team                   Team[]
+  Donation               Donation[]
+  Club                   Club?                @relation(fields: [clubId], references: [id])
+  clubId                 Int?
+  Ambulance              Ambulance[]
+  Support                Support[]
+}
