@@ -17,7 +17,7 @@ initializeMiddlewares(app);
 initializeRoutes(app);
 
 // Root Route
-app.get('/', (req: Request, res: Response) => {
+app.get('/v1/', (req: Request, res: Response) => {
     const data = {
         status: 200,
         message: "Server running properly",
@@ -33,6 +33,3 @@ app.get('/', (req: Request, res: Response) => {
  * @since 1.0.0
  */
 initializeServer(app);
-// app.listen(PORT, () => {
-//     console.log(`Server opened at https://localhost:${PORT}`);
-// })

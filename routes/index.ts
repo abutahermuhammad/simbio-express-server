@@ -1,8 +1,10 @@
 import { Express, RequestHandler } from "express";
 import memberRouter from "./members.routes";
+import userRouter from "./users.routes";
 
 const routes: RequestHandler[] = [
-    memberRouter
+    memberRouter,
+    userRouter
 ];
 
 export function initializeRoutes(app: Express) {

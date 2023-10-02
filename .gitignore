@@ -1,12 +1,12 @@
 # Node modules
 node_modules/
 
+# Build Files
+dist/
+
 # Environments
 .env
 *env.*
 
 # Logs
 *.log
-
-# Build Files
-dist/
