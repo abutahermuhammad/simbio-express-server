@@ -7,6 +7,7 @@ import donationRoutes from './donation.routes';
 import hospitalRoutes from './hospital.routes';
 import logRoutes from './log.routes';
 import memberRouter from "./members.routes";
+import requestRoutes from './request.routes';
 import userRouter from "./users.routes";
 
 const routes: RequestHandler[] = [
@@ -18,6 +19,7 @@ const routes: RequestHandler[] = [
     hospitalRoutes,
     logRoutes,
     memberRouter,
+    requestRoutes,
     userRouter,
 ];
 
