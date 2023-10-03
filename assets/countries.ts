@@ -6,7 +6,7 @@ type Country = {
 }
 
 const countries = [
-    {
+    { 
         country: "Afghanistan",
         alpha2: "AF",
         alpha3: "AFG",

@@ -47,21 +47,22 @@ model BloodCenter {
 }
 
 model Club {
-  id             Int            @id @default(autoincrement())
-  created_at     DateTime       @default(now())
-  updated_at     DateTime       @updatedAt
-  name           String         @db.VarChar(255)
-  established_at DateTime       @db.Timestamp(6)
-  founder        String         @db.VarChar(8)
-  chairman       String         @db.VarChar(8)
-  vice_chairman  String         @db.VarChar(8)
-  contact        Contact        @relation(fields: [contact_id], references: [id])
-  contact_id     Int
-  version        String?        @default("v1-alpha")
-  Organization   Organization[]
-  member_list    Member[]
-  Person         Person?        @relation(fields: [person_id], references: [id])
-  person_id      Int?
+  id               Int            @id @default(autoincrement())
+  created_at       DateTime       @default(now())
+  updated_at       DateTime       @updatedAt
+  name             String         @db.VarChar(255)
+  established_at   DateTime       @db.Timestamp(6)
+  founder_id       Int
+  chairman_id      Int
+  vice_chairman_id Int
+  founder          Person         @relation("FounderPerson", references: [id], fields: [founder_id])
+  chairman         Person         @relation("ChairmanPerson", references: [id], fields: [chairman_id])
+  vice_chairman    Person         @relation("ViceChairmanPerson", references: [id], fields: [vice_chairman_id])
+  contact          Contact        @relation(fields: [contact_id], references: [id])
+  contact_id       Int
+  version          String?        @default("v1-alpha")
+  Organization     Organization[]
+  member_list      Member[]
 }
 
 model Contact {
@@ -73,7 +74,7 @@ model Contact {
   state          String        @db.VarChar(32)
   city           String        @db.VarChar(32)
   zip            String        @db.VarChar(15)
-  country        String        @db.VarChar(32)
+  country        Country       @relation(fields: [countryAlpha_2], references: [alpha_3])
   phone          String        @db.VarChar(15)
   phone_1        String        @db.VarChar(15)
   fax            String        @db.VarChar(15)
@@ -90,6 +91,15 @@ model Contact {
   Hospital       Hospital[]
   Club           Club[]
   BloodCenter    BloodCenter[]
+  countryAlpha_2 String        @db.VarChar(2)
+}
+
+model Country {
+  alpha_3 String    @id @db.VarChar(3)
+  alpha_2 String    @db.VarChar(2)
+  numeric String    @db.VarChar(3)
+  name    String    @db.VarChar(100)
+  Contact Contact[]
 }
 
 model Location {
@@ -299,34 +309,36 @@ model LoginRecord {
 }
 
 model Person {
-  id           Int            @id @default(autoincrement())
-  created_at   DateTime       @default(now())
-  updated_at   DateTime       @updatedAt
-  avatar       String?
-  first_name   String         @db.VarChar(100)
-  last_name    String?        @db.VarChar(255)
-  father_name  String?        @db.VarChar(100)
-  mother_name  String?        @db.VarChar(100)
-  profession   String?        @db.VarChar(52)
-  nid          String?        @db.VarChar(52)
-  passport     String?        @db.VarChar(52)
-  driving      String?        @db.VarChar(52)
-  bid          String?        @db.VarChar(52) // Birth certificate ID
-  dob          DateTime? // Changed to a date type
-  gender       Gender? // Updated to use the Gender enum
-  contact      Contact        @relation(fields: [contact_id], references: [id])
-  version      String?        @default("v1-alpha")
-  contact_id   Int
-  User         User[]
-  Organization Organization[]
-  Team         Team?          @relation(fields: [teamId], references: [id])
-  teamId       Int?
-  Member       Member[]
-  Donation     Donation[]
-  Club         Club[]
-  BloodCenter  BloodCenter[]
-  Ambulance    Ambulance[]
-  Request      Request[]
+  id            Int            @id @default(autoincrement())
+  created_at    DateTime       @default(now())
+  updated_at    DateTime       @updatedAt
+  avatar        String?
+  first_name    String         @db.VarChar(100)
+  last_name     String?        @db.VarChar(255)
+  father_name   String?        @db.VarChar(100)
+  mother_name   String?        @db.VarChar(100)
+  profession    String?        @db.VarChar(52)
+  nid           String?        @db.VarChar(52)
+  passport      String?        @db.VarChar(52)
+  driving       String?        @db.VarChar(52)
+  bid           String?        @db.VarChar(52) // Birth certificate ID
+  dob           DateTime? // Changed to a date type
+  gender        Gender? // Updated to use the Gender enum
+  contact       Contact        @relation(fields: [contact_id], references: [id])
+  version       String?        @default("v1-alpha")
+  contact_id    Int
+  User          User[]
+  Organization  Organization[]
+  Team          Team?          @relation(fields: [teamId], references: [id])
+  teamId        Int?
+  Member        Member[]
+  Donation      Donation[]
+  BloodCenter   BloodCenter[]
+  Ambulance     Ambulance[]
+  Request       Request[]
+  founder       Club[]         @relation("FounderPerson")
+  chairman      Club[]         @relation("ChairmanPerson")
+  vice_chairman Club[]         @relation("ViceChairmanPerson")
 }
 
 model Hospital {
