@@ -8,6 +8,7 @@ import hospitalRoutes from './hospital.routes';
 import logRoutes from './log.routes';
 import memberRouter from "./members.routes";
 import requestRoutes from './request.routes';
+import settingRoutes from './settings.routes';
 import userRouter from "./users.routes";
 
 const routes: RequestHandler[] = [
@@ -21,6 +22,7 @@ const routes: RequestHandler[] = [
     memberRouter,
     requestRoutes,
     userRouter,
+    settingRoutes
 ];
 
 export function initializeRoutes(app: Express) {
