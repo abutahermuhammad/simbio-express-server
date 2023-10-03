@@ -3,6 +3,7 @@ import ambulanceRouter from './ambulance.routes';
 import bloodCenterRoutes from './bloodCenter.routes';
 import clubRoutes from './club.routes';
 import contactRoutes from './contact.routes';
+import donationRoutes from './donation.routes';
 import memberRouter from "./members.routes";
 import userRouter from "./users.routes";
 
@@ -11,6 +12,7 @@ const routes: RequestHandler[] = [
     clubRoutes,
     bloodCenterRoutes,
     contactRoutes,
+    donationRoutes,
     memberRouter,
     userRouter,
 ];
