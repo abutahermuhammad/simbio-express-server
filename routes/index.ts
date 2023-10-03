@@ -5,6 +5,7 @@ import clubRoutes from './club.routes';
 import contactRoutes from './contact.routes';
 import donationRoutes from './donation.routes';
 import hospitalRoutes from './hospital.routes';
+import logRoutes from './log.routes';
 import memberRouter from "./members.routes";
 import userRouter from "./users.routes";
 
@@ -15,6 +16,7 @@ const routes: RequestHandler[] = [
     contactRoutes,
     donationRoutes,
     hospitalRoutes,
+    logRoutes,
     memberRouter,
     userRouter,
 ];
