@@ -1,3 +1,3 @@
-import { json } from "express";
+import express from "express";
 
-export default json();
+export default express.json();
