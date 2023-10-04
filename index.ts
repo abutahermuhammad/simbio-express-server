@@ -1,8 +1,11 @@
 import dotenv from 'dotenv';
 import express, { Express, Request, Response } from 'express';
+// import swaggerUi from 'swagger-ui-express';
+// import swaggerDocument from './assets/docs/swagger.json';
 import { initializeServer } from './lib/server';
 import { initializeMiddlewares } from './middlewares';
 import { initializeRoutes } from './routes';
+
 
 dotenv.config();
 const app: Express = express();
@@ -26,6 +29,13 @@ app.get('/v1/', (req: Request, res: Response) => {
 
     res.status(200).json(data);
 });
+
+// Swagger API Doc
+// console.log(swaggerDocument)
+// const options = {
+//   explorer: true
+// };
+// app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument, options));
 
 /**
  * Server
