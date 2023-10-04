@@ -1,5 +1,6 @@
 import { Express, RequestHandler } from "express";
 import ambulanceRouter from './ambulance.routes';
+import apiDocRoutes from './apiDoc.routes';
 import bloodCenterRoutes from './bloodCenter.routes';
 import clubRoutes from './club.routes';
 import contactRoutes from './contact.routes';
@@ -22,7 +23,8 @@ const routes: RequestHandler[] = [
     memberRouter,
     requestRoutes,
     userRouter,
-    settingRoutes
+    settingRoutes,
+    apiDocRoutes
 ];
 
 export function initializeRoutes(app: Express) {
