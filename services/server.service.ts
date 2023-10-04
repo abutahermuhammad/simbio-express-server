@@ -1,12 +1,9 @@
 import cluster from "cluster";
 import { Express } from "express";
-import { NUM_WORKERS, PORT, SINGLE_CORE } from "../configs/server.config";
+import { NUM_WORKERS, PORT } from "../configs/server.config";
 
 const makeServer = (app: Express) => {
-    
-    app.set('trust proxy', true); // Trust first proxy
-
-    if (cluster.isMaster) {
+    if (cluster.isPrimary) {
         console.log(`Master process ${process.pid} is running`);
 
         // Fork worker processes based on configuration
@@ -34,12 +31,12 @@ const makeServer = (app: Express) => {
             console.log(`Worker process ${process.pid} started. Listening on port ${PORT}`);
         });
 
-        // Handle graceful shutdown for worker processes
-        process.on('SIGTERM', () => {
-            console.log(`Worker process ${process.pid} is shutting down...`);
-            server.close(() => {
-                console.log(`Worker process ${process.pid} has gracefully terminated.`);
-            });
+        cluster?.worker?.on('disconnect', () => {
+            console.log(`Worker process ${cluster?.worker?.id} is disconnecting...`);
+        });
+
+        cluster?.worker?.on('exit', (code, signal) => {
+            console.log(`Worker process ${cluster?.worker?.id} has exited.`);
         });
     }
 };
@@ -52,26 +49,10 @@ const makeServer = (app: Express) => {
  * @since 1.0.0
  */
 const initializeServer = (app: Express) => {
-    // We are using the 
-    if (SINGLE_CORE) {
-        // Each worker process runs the app
-        const server = app.listen(PORT, () => {
-            console.log(`Server listening on port ${PORT}`);
-        });
-
-        // Handle graceful shutdown for worker processes
-        process.on('SIGTERM', () => {
-            console.log(`Process is shutting down...`);
-            server.close(() => {
-                console.log(`Process has gracefully terminated.`);
-            });
-        });
-    }
-    
-    if (!SINGLE_CORE){
-        makeServer(app);
-    }
+    makeServer(app);
 };
+
+
 
 // Exporting modules
 export { initializeServer };

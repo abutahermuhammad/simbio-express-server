@@ -1,8 +1,8 @@
 import dotenv from 'dotenv';
 import express, { Express, Request, Response } from 'express';
-import { initializeServer } from './lib/server';
 import { initializeMiddlewares } from './middlewares';
 import { initializeRoutes } from './routes';
+import { initializeServer } from './services/server.service';
 
 
 dotenv.config();
