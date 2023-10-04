@@ -1,6 +1,6 @@
 import { Router } from "express";
 import swaggerUi from 'swagger-ui-express';
-import swaggerDocument from '../assets/swagger.json';
+import swaggerDocument from '../assets/open-api.json';
 
 // Creating an Express Router instance
 const router = Router();
