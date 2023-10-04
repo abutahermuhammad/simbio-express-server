@@ -2,7 +2,7 @@ import { Request } from 'express';
 import multer, { FileFilterCallback } from "multer";
 import multerS3 from 'multer-s3';
 import path from "path";
-import { s3client } from '../configs/aws.configs';
+import { s3client } from '../configs/aws.config';
 
 // Load configuration from environment variables
 const AWS_BUCKET_NAME = process.env.AWS_BUCKET_NAME || 'your-default-bucket-name';
@@ -16,12 +16,12 @@ const storage = multerS3({
   s3: s3client,
   bucket: AWS_BUCKET_NAME,
 
-   /**
-   * Function to generate metadata for the uploaded file.
-   * @param {Request} req - Express request object.
-   * @param {Express.Multer.File} file - Uploaded file object.
-   * @param {function} cb - Callback function to call when metadata is ready.
-   */
+  /**
+  * Function to generate metadata for the uploaded file.
+  * @param {Request} req - Express request object.
+  * @param {Express.Multer.File} file - Uploaded file object.
+  * @param {function} cb - Callback function to call when metadata is ready.
+  */
   metadata: (req: Request, file: Express.Multer.File, cb) => {
     // Implement metadata as needed for your application
     const metadata = {
@@ -77,9 +77,9 @@ const limits = {
  * @type {multer.Instance}
  */
 export const upload = multer({
-    // dest: 'uploads/',
-    storage,
-    fileFilter,
-    limits,
-    preservePath: true
+  // dest: 'uploads/',
+  storage,
+  fileFilter,
+  limits,
+  preservePath: true
 })

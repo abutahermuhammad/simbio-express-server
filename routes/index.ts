@@ -1,17 +1,17 @@
 import { Express, RequestHandler } from "express";
-import ambulanceRouter from './ambulance.routes';
-import apiDocRoutes from './apiDoc.routes';
-import bloodCenterRoutes from './bloodCenter.routes';
-import clubRoutes from './club.routes';
-import contactRoutes from './contact.routes';
-import donationRoutes from './donation.routes';
-import hospitalRoutes from './hospital.routes';
-import logRoutes from './log.routes';
-import memberRouter from "./members.routes";
-import requestRoutes from './request.routes';
-import rootRoutes from './root.routes';
-import settingRoutes from './settings.routes';
-import userRouter from "./users.routes";
+import ambulanceRouter from './ambulance.route';
+import apiDocRoutes from './apiDoc.route';
+import bloodCenterRoutes from './bloodCenter.route';
+import clubRoutes from './club.route';
+import contactRoutes from './contact.route';
+import donationRoutes from './donation.route';
+import hospitalRoutes from './hospital.route';
+import logRoutes from './log.route';
+import memberRouter from "./members.route";
+import requestRoutes from './request.route';
+import rootRoutes from './root.route';
+import settingRoutes from './settings.route';
+import userRouter from "./users.route";
 
 const routes: RequestHandler[] = [
     rootRoutes,

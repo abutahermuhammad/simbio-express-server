@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deleteDonation, getDonation, getDonations, patchDonation, postDonation } from "../controllers/donation.controllers";
+import { deleteDonation, getDonation, getDonations, patchDonation, postDonation } from "../controllers/donation.controller";
 
 // Creating an Express Router instance
 const router = Router();

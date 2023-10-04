@@ -5,7 +5,7 @@ import {
     getMembers,
     patchMember,
     postMembers
-} from "../controllers/member.controllers";
+} from "../controllers/member.controller";
 
 // Creating an Express Router instance
 const router = Router();

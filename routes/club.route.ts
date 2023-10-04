@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deleteClub, getClub, getClubs, patchClub, postClub } from "../controllers/club.controllers";
+import { deleteClub, getClub, getClubs, patchClub, postClub } from "../controllers/club.controller";
 
 // Creating an Express Router instance
 const router = Router();

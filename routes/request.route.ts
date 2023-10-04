@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deleteRequest, getRequest, getRequests, patchRequest, postRequest } from "../controllers/request.controllers";
+import { deleteRequest, getRequest, getRequests, patchRequest, postRequest } from "../controllers/request.controller";
 
 // Creating an Express Router instance
 const router = Router();
