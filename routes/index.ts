@@ -9,10 +9,12 @@ import hospitalRoutes from './hospital.routes';
 import logRoutes from './log.routes';
 import memberRouter from "./members.routes";
 import requestRoutes from './request.routes';
+import rootRoutes from './root.routes';
 import settingRoutes from './settings.routes';
 import userRouter from "./users.routes";
 
 const routes: RequestHandler[] = [
+    rootRoutes,
     ambulanceRouter,
     clubRoutes,
     bloodCenterRoutes,
