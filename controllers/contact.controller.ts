@@ -1,26 +1,42 @@
-import { Request, Response } from "express";
-import { GetRequestParams } from "../type";
+import { NextFunction, Request, Response } from "express";
+import { ListRequestParameterSchema } from "../models/request.model";
+import { getContacts } from "../services/contact.service";
 
 
 /**
  * Get a list of contact with pagination.
  * 
- * @param request 
- * @param response 
+ * @param request
+ * @param response
  */
-export const getContacts =  (request: Request, response: Response) => {
+export const getContactsController = async (request: Request, response: Response, next: NextFunction) => {
     try {
+        const { context, ...params } = ListRequestParameterSchema.parse(request.params);
+
+        // When no request context defined, returns null;
+        // This is to make sure the origin of API call. Which is necessary for data log, analytics, security, etc.
+        if (!context) {
+            return next();
+        }
+
         // Extract query parameters from the request.
-        const query = request.query as GetRequestParams;
+        // const query = request.query as GetRequestParams;
+        const contacts = await getContacts({ ...params });
+
 
         // Perform database query to retrieve contacts with pagination and filtering.
         // Example: const contacts = await contactModel.find({ filter }).limit(limit).skip(offset);
 
         // Respond with the retrieved contacts.
-        response.json({ message: "contact retrieved successfully", query: query });
+        response.status(200).json({
+            params: params,
+            contacts,
+            length: 0,
+            offset: 0,
+            total: 0,
+        });
     } catch (error) {
-        console.error(error);
-        response.status(500).json({ message: "Internal server error" });
+        next(error);
     }
 };
 
@@ -30,7 +46,7 @@ export const getContacts =  (request: Request, response: Response) => {
  * @param request 
  * @param response 
  */
-export const postContact =  (request: Request, response: Response) => {
+export const postContact = (request: Request, response: Response) => {
     try {
         // Extract contact data from the request body.
         // const contactData = request.body;
@@ -61,7 +77,7 @@ export const getContact = (request: Request, response: Response) => {
         // Example: const contact = await contactModel.findById(contactId);
 
         // Respond with the retrieved contact.
-        response.json({ message: "contact retrieved successfully", id: contactId,  data: /*contact*/ {} });
+        response.json({ message: "contact retrieved successfully", id: contactId, data: /*contact*/ {} });
     } catch (error) {
         console.error(error);
         response.status(500).json({ message: "Internal server error" });

@@ -30,8 +30,7 @@ const routes: RequestHandler[] = [
 ];
 
 export function initializeRoutes(app: Express) {
-
     routes.forEach(route => {
-        app.use('/v1/', route)
+        app.use('/v1', route)
     });
 }

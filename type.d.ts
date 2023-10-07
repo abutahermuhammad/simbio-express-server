@@ -7,7 +7,6 @@ export type ContextOptions = "web" | "tauri" | "app";
 // Enum for supported data sorting types.
 export type SortType = "asc" | "dsc";
 
-
 // GET Methods default params
 export type GetRequestParams = {
     context?: ContextOptions;
