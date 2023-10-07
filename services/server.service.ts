@@ -29,7 +29,7 @@ const initializeServer = (app: Express) => {
         });
     } else {
         // Each worker process runs the Express app and listens on the specified PORT
-        const server = app.listen(PORT, () => {
+        app.listen(PORT, () => {
             console.log(`Worker process ${process.pid} started. Listening on port ${PORT}`);
         });
 
@@ -38,7 +38,7 @@ const initializeServer = (app: Express) => {
             console.log(`Worker process ${cluster.worker?.id} is disconnecting...`);
         });
 
-        cluster.worker?.on('exit', (code, signal) => {
+        cluster.worker?.on('exit', () => {
             console.log(`Worker process ${cluster.worker?.id} has exited.`);
         });
     }
