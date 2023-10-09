@@ -16,3 +16,6 @@ export const NUM_WORKERS: number = ENVIRONMENT === "development" ? 1 : os.cpus()
 // Request Payload Size
 // This will define the allowed payload size for a upcoming payload withing a REST API call.
 export const MAX_REQUEST_PAYLOAD_SIZE = '100kb';
+
+// Public Static Directory
+export const STATIC_FILE_DIR = 'public'
