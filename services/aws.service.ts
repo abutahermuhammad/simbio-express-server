@@ -1,11 +1,9 @@
-import { S3Client } from '@aws-sdk/client-s3'
-import { config } from 'dotenv'
-
-config()
+import { S3Client } from '@aws-sdk/client-s3';
+import config from 'config';
 
 // Load configuration from environment variables
-export const AWS_BUCKET_NAME = process.env.AWS_BUCKET_NAME || 'your-default-bucket-name'
-export const AWS_REGION = process.env.AWS_REGION || 'us-east-1'
+export const AWS_BUCKET_NAME = config.get("aws.bucket");
+export const AWS_REGION = config.get<string>("aws.region");
 
 /**
  * AWS S3 client for file storage with proper security measures.

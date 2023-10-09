@@ -1,5 +1,5 @@
+import config from 'config';
 import express from 'express';
-import { STATIC_FILE_DIR } from "./../configs/server.config";
 
 // const options = {
 //     dotfiles: 'ignore', // ignore dotfiles
@@ -14,4 +14,4 @@ import { STATIC_FILE_DIR } from "./../configs/server.config";
 // }
 
 // export default express.static(STATIC_FILE_DIR, options);
-export default express.static(STATIC_FILE_DIR);
+export default express.static(config.get("server.static_file_dir"));

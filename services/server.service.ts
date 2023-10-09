@@ -6,8 +6,7 @@ import cluster from "cluster";
 import { Express } from "express";
 // Import the NUM_WORKERS and PORT constants from the server configuration file
 // These constants define how many worker processes we want to create and what port they will listen on 
-import { NUM_WORKERS, PORT } from "../configs/server.config";
-
+import config from 'config';
 
 /**
  * Function to initialize the server 
@@ -25,7 +24,7 @@ const initializeServer = (app: Express) => {
 
         // Fork worker processes based on configuration.
         // This creates child processes that inherit the environment and arguments from the primary process.
-        for (let i = 0; i < NUM_WORKERS; i++) {
+        for (let i = 0; i < config.get<number>("server.worker_count"); i++) {
             cluster.fork();
         }
 
@@ -58,9 +57,9 @@ const initializeServer = (app: Express) => {
     } else {
         // Each worker process runs the Express app and listens on the specified PORT.
         // This creates a web server that can handle HTTP requests and responses using the app object.
-        app.listen(PORT, () => {
+        app.listen(config.get<number>("server.port"), () => {
             // Log a message to indicate that a worker process started and show its process ID and port number.
-            console.log(`Worker process ${process.pid} started. Listening on port ${PORT}`);
+            console.log(`Worker process ${process.pid} started. Listening on port ${config.get<number>("server.port")}`);
         });
 
         // Handle worker disconnect and exit events.

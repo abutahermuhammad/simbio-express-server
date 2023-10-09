@@ -1,0 +1,27 @@
+{
+    "name": "SIMBIO",
+    "aws": {
+        "bucket": "default-bucket-name",
+        "region": "us-east-1"
+    },
+    "azure": {},
+    "cloudflare": {
+        "host": ""
+    },
+    "openai": {
+        "host": ""
+    },
+    "stripe": {
+        "host": ""
+    },
+    "mail": {
+        "host": "dev-mail-server"
+    },
+    "server": {
+        "debug": false,
+        "port": 5000,
+        "request_payload_size": "100kb",
+        "static_file_dir": "public"
+    },
+    "version": "v1"
+}

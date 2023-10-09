@@ -1,0 +1,7 @@
+{
+    "name": "SIMBIO - Production",
+    "server": {
+        "port": 5000,
+        "worker_count": 1
+    }
+}
