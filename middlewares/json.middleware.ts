@@ -1,5 +1,5 @@
-import { MAX_REQUEST_PAYLOAD_SIZE } from "@/configs/server.config";
 import express from "express";
+import { MAX_REQUEST_PAYLOAD_SIZE } from "./../configs/server.config";
 
 const options = {
     inflate: true,  // Enables or disables handling deflated (compressed) bodies; when disabled, deflated bodies are rejected.
