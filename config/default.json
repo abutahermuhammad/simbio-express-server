@@ -19,9 +19,11 @@
     },
     "server": {
         "debug": false,
+        "ip": "127.0.0.1",
         "port": 5000,
         "request_payload_size": "100kb",
-        "static_file_dir": "public"
+        "static_file_dir": "public",
+        "middlewares": {}
     },
     "version": "v1"
 }
