@@ -1,5 +1,5 @@
 import config from 'config';
-import express, { Express, NextFunction, Request, Response } from 'express';
+import express, { Express } from 'express';
 import { initializeMiddlewares } from './middlewares';
 import { initializeRoutes } from './routes';
 import { initializeServer } from './services/server.service';
@@ -25,16 +25,6 @@ initializeMiddlewares(app);
 // Initialize routes for the Express app
 initializeRoutes(app);
 
-app.use((req: Request, res: Response, next: NextFunction) => {
-    try {
-        res.status(404).json({
-            status: "fail",
-            message: `Can't find ${req.originalUrl} on the server!`,
-        })
-    } catch (error) {
-        next(error)
-    }
-});
 
 /**
  * Initialize Server

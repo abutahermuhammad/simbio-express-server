@@ -1,4 +1,4 @@
-import { Express, RequestHandler } from "express";
+import { Express, NextFunction, Request, RequestHandler, Response } from "express";
 import ambulanceRouter from './ambulance.route';
 import apiDocRoutes from './apiDoc.route';
 import bloodCenterRoutes from './bloodCenter.route';
@@ -26,11 +26,25 @@ const routes: RequestHandler[] = [
     requestRoutes,
     userRouter,
     settingRoutes,
-    apiDocRoutes
+    apiDocRoutes,
 ];
+
+const error404 = (req: Request, res: Response, next: NextFunction) => {
+    try {
+        res.status(404).json({
+            status: "fail",
+            message: `Can't find \`${req.url}\` on the server!`,
+        })
+    } catch (error) {
+        next(error)
+    }
+}
 
 export function initializeRoutes(app: Express) {
     routes.forEach(route => {
         app.use('/v1', route)
     });
+
+    app.use(error404);
+
 }
