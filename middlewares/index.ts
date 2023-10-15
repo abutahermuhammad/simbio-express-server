@@ -1,4 +1,5 @@
 import { ErrorRequestHandler, Express, RequestHandler } from "express";
+import { debug } from "../utils/debug.util";
 import compressionMiddleware from "./compression.middleware";
 import cookieParserMiddleware from "./cookie-parser.middleware";
 import corsMiddleware from "./cors.middleware";
@@ -51,19 +52,19 @@ export function initializeMiddlewares(app: Express) {
   const ENV = app.get('env') as string;
 
   // Use all middlewares in the defined order
-  console.log("Initializing middlewares...");
+  debug("Initializing middlewares...")
 
   if (ENV === "development") {
     devOnlyMiddlewares.forEach(({ middleware, description }) => {
       app.use(middleware);
-      console.log(`\tLoaded: ${description}`);
+      debug(`\tLoaded: ${description}`);
     });
   }
 
   middlewares.forEach(({ middleware, description }) => {
     app.use(middleware);
-    console.log(`\tLoaded: ${description}`);
+    debug(`\tLoaded: ${description}`);
   });
 
-  console.log("Middlewares initialized successfully. \n");
+  debug("Middlewares initialized successfully. \n");
 }

@@ -1,44 +1,35 @@
+import config from 'config';
 import { NextFunction, Request, Response } from "express";
-import { ListRequestParameterSchema } from "../models/request.model";
-import { getContacts } from "../services/contact.service";
+import asyncHandler from "express-async-handler";
+import * as _ from 'lodash';
+import { ContactSchema, ContactSchemaType } from "../models/contact.model";
+import { RequestQuerySchema, SinglePageRequestParameterSchema } from "../models/request.model";
+import { createContact, deleteContactById, getContactById, getContacts, isExists, updateContactById } from "../services/contact.service";
+import { debug } from '../utils/debug.util';
 
-
+const PROJECT_VERSION = config.get('version');
 /**
  * Get a list of contact with pagination.
  * 
- * @param request
+ * @param request 
  * @param response
+ * 
+ * @since 1.0.0
  */
-export const getContactsController = async (request: Request, response: Response, next: NextFunction) => {
-    try {
-        const { context, ...params } = ListRequestParameterSchema.parse(request.params);
+export const getContactsController = asyncHandler(async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+    const { context, ...queries } = RequestQuerySchema.parse(request.query);
+    const contacts = await getContacts(queries) as ContactSchemaType[];
 
-        // When no request context defined, returns null;
-        // This is to make sure the origin of API call. Which is necessary for data log, analytics, security, etc.
-        if (!context) {
-            return next();
-        }
-
-        // Extract query parameters from the request.
-        // const query = request.query as GetRequestParams;
-        const contacts = await getContacts({ ...params });
-
-
-        // Perform database query to retrieve contacts with pagination and filtering.
-        // Example: const contacts = await contactModel.find({ filter }).limit(limit).skip(offset);
-
-        // Respond with the retrieved contacts.
-        response.status(200).json({
-            params: params,
-            contacts,
-            length: 0,
-            offset: 0,
-            total: 0,
-        });
-    } catch (error) {
-        next(error);
-    }
-};
+    // Respond with the retrieved contacts.
+    response.status(200).json({
+        queries,
+        contacts,
+        length: contacts.length,
+        offset: 0,
+        total: 0,
+        version: PROJECT_VERSION
+    });
+});
 
 /**
  * Create a new contact.
@@ -46,21 +37,16 @@ export const getContactsController = async (request: Request, response: Response
  * @param request 
  * @param response 
  */
-export const postContact = (request: Request, response: Response) => {
-    try {
-        // Extract contact data from the request body.
-        // const contactData = request.body;
+export const postContact = asyncHandler(async (request: Request, response: Response) => {
+    // Extracting body object.
+    const body = ContactSchema.parse(request.body);
 
-        // Create a new contact in the database.
-        // Example: const newContact = await contactModel.create(contactData);
+    // Create a new contact in the database.
+    const contact = await createContact(body);
 
-        // Respond with the created contact.
-        response.json({ message: "contact created successfully" });
-    } catch (error) {
-        console.error(error);
-        response.status(500).json({ message: "Internal server error" });
-    }
-};
+    // Respond with a success message.
+    response.status(200).json({ timestamp: Date.now(), message: "contact created successfully", data: contact });
+});
 
 /**
  * Get a contact by ID.
@@ -68,65 +54,89 @@ export const postContact = (request: Request, response: Response) => {
  * @param request 
  * @param response 
  */
-export const getContact = (request: Request, response: Response) => {
-    try {
-        // Extract contact ID from the request parameters.
-        const contactId = request.params.id;
+export const getContact = asyncHandler(async (request: Request, response: Response) => {
+    // Extract contact ID from the request parameters.
+    const id = parseInt(request.params.id);
 
-        // Retrieve the contact from the database by ID.
-        // Example: const contact = await contactModel.findById(contactId);
+    // Retrieve the contact from the database by ID.
+    const contact = await getContactById(id)
+    // Example: const contact = await contactModel.findById(contactId);
 
-        // Respond with the retrieved contact.
-        response.json({ message: "contact retrieved successfully", id: contactId, data: /*contact*/ {} });
-    } catch (error) {
-        console.error(error);
-        response.status(500).json({ message: "Internal server error" });
+    // Respond with the retrieved contact.
+    if (contact) {
+        response.status(200).json({ message: "contact retrieved successfully", id, data: contact });
     }
-};
+
+    response.status(404).json({ message: "No contact found!" })
+});
 
 /**
- * Update a contact by ID (partial update).
+ * patchContact
+ * @description Update a contact by ID (partial update).
  * 
  * @param request 
  * @param response 
+ * 
+ * @since 1.0.0
  */
-export const patchContact = (request: Request, response: Response) => {
-    try {
-        // Extract contact ID from the request parameters.
-        // const contactId = request.params.id;
+export const patchContact = asyncHandler(async (request: Request, response: Response) => {
+    // Extracting URL->query & body object.
+    const params = SinglePageRequestParameterSchema.parse(request.params);
+    const body = ContactSchema.parse(request.body);
 
-        // Extract partial contact data from the request body.
-        // const partialContactData = request.body;
+    // Converting `id` from string to number
+    const id = Number(params.id);
 
-        // Update the contact partially in the database by ID.
-        // Example: const updatedContact = await contactModel.findByIdAndUpdate(contactId, partialContactData, { new: true });
+    // When the `id` provided with URL query doesn't match with the `id` in the body throws an error.
+    if (id !== body.id) response.status(404).json({ message: "Inconsistency in data!" });
 
-        // Respond with the updated contact.
-        response.json({ message: "contact updated successfully", data: /*updatedContact*/ {} });
-    } catch (error) {
-        console.error(error);
-        response.status(500).json({ message: "Internal server error" });
-    }
-};
+    // Checking whether contact exits or not.
+    const exists = await isExists(id);
+
+    // Returning 404 error when no contact available.
+    if (!exists) response.status(404).json({ message: "Record do not exits!" });
+
+    // Pulling original data object.
+    const currentContact = await getContactById(id);
+
+    // Creating new object by combining `currentData` and `updatedData`. This will prevent from unwanted data wipeout or replacement. 
+    const updatedData: ContactSchemaType = await _.merge(currentContact, body) as object;
+
+    debug(updatedData);
+
+    // Delete the contact from the database by ID.
+    const contact = await updateContactById(id, updatedData);
+
+    // Respond with a success message.
+    response.status(200).json({ timestamp: Date.now(), message: "Successfully updated!", contact });
+});
 
 /**
  * Delete a contact by ID.
  * 
  * @param request 
  * @param response 
+ * 
+ * @since 1.0.0
  */
-export const deleteContact = (request: Request, response: Response) => {
-    try {
-        // Extract contact ID from the request parameters.
-        // const contactId = request.params.id;
+export const deleteContact = asyncHandler(async (request: Request, response: Response) => {
+    // TODO:
+    // - Delete method need to replace with soft delete.
+    // 
+    // Author: Abu Taher Muhammad <abutahermuhammad>
 
-        // Delete the contact from the database by ID.
-        // Example: await contactModel.findByIdAndRemove(contactId);
+    // Extract contact ID from the request parameters.
+    const id = Number(request.params.id);
 
-        // Respond with a success message.
-        response.json({ message: "contact deleted successfully" });
-    } catch (error) {
-        console.error(error);
-        response.status(500).json({ message: "Internal server error" });
-    }
-};
+    // Checking whether contact exits or not.
+    const exists = await isExists(id);
+
+    // Returning 404 error when no contact available.
+    if (!exists) response.status(404).json({ message: "Record not found!" });
+
+    // Delete the contact from the database by ID.
+    const contact = await deleteContactById(id);
+
+    // Respond with a success message.
+    response.status(200).json({ id: contact.id, message: "Successfully deleted!", deleted_at: Date.now() });
+});

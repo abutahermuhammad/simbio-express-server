@@ -10,7 +10,7 @@ export const RequestQuerySchema = z.object({
     search: z.string().optional(),
     filter: z.string().optional(),
     q: z.string().optional(),
-    limit: z.number().optional(),
+    limit: z.string().optional(),
     offset: z.number().optional(),
     sortby: z.string().optional(),
     order: z.string().optional(),
@@ -18,7 +18,7 @@ export const RequestQuerySchema = z.object({
     include: z.string().optional()
 });
 
-export type ListRequestParameterType = z.infer<typeof RequestQuerySchema>;
+export type RequestQuerySchemaType = z.infer<typeof RequestQuerySchema>;
 
 
 // Request Parameter Schema Model
@@ -29,3 +29,13 @@ export type RequestParameterSchemaType = z.infer<typeof RequestParameterSchema>;
 
 export const RequestCookieSchema = z.object({});
 export type RequestCookieSchemaType = z.infer<typeof RequestCookieSchema>;
+
+
+// Single Page
+
+// Request Parameter Schema Model
+// This defines all the possible parameters.
+export const SinglePageRequestParameterSchema = z.object({
+    id: z.string()
+});
+export type SinglePageRequestParameterSchemaType = z.infer<typeof SinglePageRequestParameterSchema>;

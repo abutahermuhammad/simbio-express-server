@@ -3,10 +3,11 @@ import express, { Express } from 'express';
 import { initializeMiddlewares } from './middlewares';
 import { initializeRoutes } from './routes';
 import { initializeServer } from './services/server.service';
+import { debug } from './utils/debug.util';
 // import debug from ('debug')('app:startup');
 
 
-// debug("Application started")
+debug("Application started")
 
 // Create an Express application instance
 // file deepcode ignore DisablePoweredBy: <Already added `helmet` module in the middleware script>

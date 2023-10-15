@@ -7,6 +7,7 @@ import { Express } from "express";
 // Import the NUM_WORKERS and PORT constants from the server configuration file
 // These constants define how many worker processes we want to create and what port they will listen on 
 import config from 'config';
+import { debugServer } from "../utils/debug.util";
 
 /**
  * Function to initialize the server 
@@ -20,7 +21,7 @@ const initializeServer = (app: Express) => {
     // The primary process is responsible for creating and managing the worker processes .
     if (cluster.isPrimary) {
         // Log a message to indicate that the primary process is running and show its process ID.
-        console.log(`Master process ${process.pid} is running`);
+        debugServer(`Master process ${process.pid} is running`);
 
         // Fork worker processes based on configuration.
         // This creates child processes that inherit the environment and arguments from the primary process.
@@ -33,7 +34,7 @@ const initializeServer = (app: Express) => {
         process.on('SIGTERM', () => {
 
             // Log a message to indicate that the primary process is shutting down.
-            console.log('Master process is shutting down...');
+            debugServer('Master process is shutting down...');
 
             // Loop through all the worker processes in the cluster and kill them.
             for (const id in cluster.workers) {
@@ -46,20 +47,20 @@ const initializeServer = (app: Express) => {
         cluster.on('exit', (worker, code, signal) => {
 
             // Log a message to indicate that a worker process died and show its process ID.
-            console.log(`Worker process ${worker.process.pid} died. Restarting...`);
+            debugServer(`Worker process ${worker.process.pid} died. Restarting...`);
 
             // Fork a new worker process to replace the one that exited.
             cluster.fork();
 
             // Log a message to show the exit code and signal of the worker process that exited.
-            console.log(`Exit Code: ${code}\t  Signal: ${signal}`);
+            debugServer(`Exit Code: ${code}\t  Signal: ${signal}`);
         });
     } else {
         // Each worker process runs the Express app and listens on the specified PORT.
         // This creates a web server that can handle HTTP requests and responses using the app object.
         app.listen(config.get<number>("server.port"), () => {
             // Log a message to indicate that a worker process started and show its process ID and port number.
-            console.log(`Worker process ${process.pid} started. Listening on port ${config.get<number>("server.port")}`);
+            debugServer(`Worker process ${process.pid} started. Listening on port ${config.get<number>("server.port")}`);
         });
 
         // Handle worker disconnect and exit events.
@@ -69,12 +70,12 @@ const initializeServer = (app: Express) => {
         // This object contains information and methods related to the worker process.
         cluster.worker?.on('disconnect', () => {
             // Log a message to indicate that a worker process is disconnecting and show its ID.
-            console.log(`Worker process ${cluster.worker?.id} is disconnecting...`);
+            debugServer(`Worker process ${cluster.worker?.id} is disconnecting...`);
         });
 
         cluster.worker?.on('exit', () => {
             // Log a message to indicate that a worker process has exited and show its ID.
-            console.log(`Worker process ${cluster.worker?.id} has exited.`);
+            debugServer(`Worker process ${cluster.worker?.id} has exited.`);
         });
     }
 };

@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 
 declare global {
+    // @ts-ignore
     var prisma: PrismaClient // This must be a `var` and not a `let / const`
 }
 

@@ -23,7 +23,19 @@
         "port": 5000,
         "request_payload_size": "100kb",
         "static_file_dir": "public",
-        "middlewares": {}
+        "middlewares": {
+            "cors": false,
+            "rateLimit": true,
+            "compression": true,
+            "json": true,
+            "cookieParser": true,
+            "session": true,
+            "securityHeader": true,
+            "staticDir": true,
+            "urlEncoded": true,
+            "requestValidate": true,
+            "error": true
+        }
     },
     "version": "v1"
 }
