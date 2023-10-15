@@ -1,4 +1,5 @@
 import session from 'express-session';
+import crypto from 'crypto'
 
 /**
  * Cookie Session Configuration
@@ -13,7 +14,7 @@ import session from 'express-session';
 const options = {
   resave: true,
   saveUninitialized: true,
-  secret: "this-is-a-simbio-secret-key",
+  secret: "" ,
   cookie: {
     httpOnly: true,
     sameSite: true,

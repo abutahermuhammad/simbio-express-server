@@ -11,7 +11,7 @@ export const RequestQuerySchema = z.object({
     filter: z.string().optional(),
     q: z.string().optional(),
     limit: z.string().optional(),
-    offset: z.number().optional(),
+    offset: z.string().optional(),
     sortby: z.string().optional(),
     order: z.string().optional(),
     exclude: z.string().optional(),

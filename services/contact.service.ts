@@ -37,9 +37,9 @@ export const getContacts = async ({
     filter = "",
     q = "",
     limit = "10",
-    offset = 0,
-    sortby = "",
-    order = "",
+    offset = "0",
+    sortby = "id",
+    order = "asc",
     include = "",
     exclude = "",
 }:
@@ -50,11 +50,80 @@ export const getContacts = async ({
     try {
         const contacts = await prisma.contact.findMany({
             // query: search as string || filter as string || q as string,
-            skip: offset,
-            take: parseInt(limit),
-            // orderBy: {
-            //     [sortby]: order
-            // }
+            skip: Number(offset),
+            take: Number(limit),
+            orderBy: {
+                [sortby]: order
+            },
+            where: {
+                OR: [
+                    {
+                        address_line_0: {
+                            contains: search || q,
+                        }
+                    },
+                    {
+                        address_line_1: {
+                            contains: search || q,
+                        }
+
+                    },
+                    {
+                        state: {
+                            contains: search || q,
+                        }
+
+                    },
+                    {
+                        city: {
+                            contains: search || q,
+                        }
+
+                    },
+                    {
+                        zip: {
+                            contains: search || q,
+                        }
+
+                    },
+                    {
+                        country_id: {
+                            contains: search || q,
+                        }
+
+                    },
+                    {
+                        phone: {
+                            contains: search || q,
+                        }
+
+                    },
+                    {
+                        phone_1: {
+                            contains: search || q,
+                        }
+
+                    },
+                    {
+                        fax: {
+                            contains: search || q,
+                        }
+
+                    },
+                    {
+                        email: {
+                            contains: search || q,
+                        }
+
+                    },
+                    {
+                        email_1: {
+                            contains: search || q,
+                        }
+
+                    }
+                ]
+            }
         });
 
         return contacts;

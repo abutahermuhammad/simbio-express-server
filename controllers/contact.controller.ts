@@ -22,11 +22,9 @@ export const getContactsController = asyncHandler(async (request: Request, respo
 
     // Respond with the retrieved contacts.
     response.status(200).json({
-        queries,
-        contacts,
-        length: contacts.length,
-        offset: 0,
-        total: 0,
+        data: contacts,
+        offset: queries.offset || 0,
+        total: contacts.length,
         version: PROJECT_VERSION
     });
 });
