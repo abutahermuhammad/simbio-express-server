@@ -1,5 +1,16 @@
+import config from 'config';
 import { Request, Response } from "express";
+import asyncHandler from 'express-async-handler';
+import { merge } from 'lodash';
+import { MemberSchema, MemberSchemaType, NewMemberSchema } from "../models/member.model";
+import { RequestQuerySchema, SinglePageRequestParameterSchema } from "../models/request.model";
+import { createContact } from '../services/contact.service';
+import { createMember, deleteMemberById, getMemberById, getMembers, isExists, updateMemberById } from "../services/member.service";
+import { createPerson } from '../services/person.service';
 import { AppId, ContextOptions, SortType } from "../type";
+import { debug } from '../utils/debug.util';
+
+const PROJECT_VERSION = config.get('version');
 
 
 export type GetMembersParams = {
@@ -14,27 +25,26 @@ export type GetMembersParams = {
     exclude?: AppId[];
     include?: AppId[];
 }
+
 /**
  * Get a list of members with pagination.
  * 
  * @param request 
  * @param response 
  */
-export const getMembers = async (request: Request, response: Response) => {
-    try {
-        // Extract query parameters from the request.
-        const query = request.query as GetMembersParams;
+export const getMembersController = asyncHandler(async (request: Request, response: Response) => {
+    const { context, ...queries } = RequestQuerySchema.parse(request.query);
+    const members = await getMembers(queries) as MemberSchemaType[];
 
-        // Perform database query to retrieve members with pagination and filtering.
-        // Example: const members = await MemberModel.find({ filter }).limit(limit).skip(offset);
+    // Respond with the retrieved contacts.
+    response.status(200).json({
+        data: members,
+        offset: queries.offset || 0,
+        total: members.length,
+        version: PROJECT_VERSION
+    });
+});
 
-        // Respond with the retrieved members.
-        response.json({ message: "Members retrieved successfully", query: query });
-    } catch (error) {
-        console.error(error);
-        response.status(500).json({ message: "Internal server error" });
-    }
-};
 
 /**
  * Create a new member.
@@ -42,21 +52,19 @@ export const getMembers = async (request: Request, response: Response) => {
  * @param request 
  * @param response 
  */
-export const postMembers = async (request: Request, response: Response) => {
-    try {
-        // Extract member data from the request body.
-        // const memberData = request.body;
+export const postMemberController = asyncHandler(async (request: Request, response: Response) => {
+    // Extracting body object.
+    const { personal, health, contact } = NewMemberSchema.parse(request.body);
 
-        // Create a new member in the database.
-        // Example: const newMember = await MemberModel.create(memberData);
+    // Create a new contact in the database.
+    const { id: contactId } = await createContact(contact);
+    const { id: personId } = await createPerson({ ...personal, contact_id: contactId });
+    const member = await createMember({ ...health, person_id: personId, version: PROJECT_VERSION });
 
-        // Respond with the created member.
-        response.json({ message: "Member created successfully" });
-    } catch (error) {
-        console.error(error);
-        response.status(500).json({ message: "Internal server error" });
-    }
-};
+    // Respond with a success message.
+    response.status(200).json({ timestamp: Date.now(), message: "contact created successfully", data: member });
+});
+
 
 /**
  * Get a member by ID.
@@ -64,65 +72,91 @@ export const postMembers = async (request: Request, response: Response) => {
  * @param request 
  * @param response 
  */
-export const getMember = async (request: Request, response: Response) => {
-    try {
-        // Extract member ID from the request parameters.
-        const memberId = request.params.id;
+export const getMemberController = asyncHandler(async (request: Request, response: Response) => {
+    // Extract contact ID from the request parameters.
+    const id = parseInt(request.params.id);
 
-        // Retrieve the member from the database by ID.
-        // Example: const member = await MemberModel.findById(memberId);
+    // Retrieve the contact from the database by ID.
+    const contact = await getMemberById(id)
+    // Example: const contact = await contactModel.findById(contactId);
 
-        // Respond with the retrieved member.
-        response.json({ message: "Member retrieved successfully", data: /*member*/ {} });
-    } catch (error) {
-        console.error(error);
-        response.status(500).json({ message: "Internal server error" });
+    // Respond with the retrieved contact.
+    if (contact) {
+        response.status(200).json({ message: "contact retrieved successfully", id, data: contact });
     }
-};
+
+    response.status(404).json({ message: "No contact found!" })
+});
+
 
 /**
- * Update a member by ID (partial update).
+ * patchMember
+ * @description Update a member by ID (partial update).
  * 
  * @param request 
  * @param response 
+ * 
+ * @since 1.0.0
  */
-export const patchMember = async (request: Request, response: Response) => {
-    try {
-        // Extract member ID from the request parameters.
-        const memberId = request.params.id;
+export const patchMemberController = asyncHandler(async (request: Request, response: Response) => {
+    // Extracting URL->query & body object.
+    const params = SinglePageRequestParameterSchema.parse(request.params);
+    const body = MemberSchema.parse(request.body);
 
-        // Extract partial member data from the request body.
-        const partialMemberData = request.body;
+    // Converting `id` from string to number
+    const id = Number(params.id);
 
-        // Update the member partially in the database by ID.
-        // Example: const updatedMember = await MemberModel.findByIdAndUpdate(memberId, partialMemberData, { new: true });
+    // When the `id` provided with URL query doesn't match with the `id` in the body throws an error.
+    if (id !== body.id) response.status(404).json({ message: "Inconsistency in data!" });
 
-        // Respond with the updated member.
-        response.json({ message: "Member updated successfully", data: /*updatedMember*/ {} });
-    } catch (error) {
-        console.error(error);
-        response.status(500).json({ message: "Internal server error" });
-    }
-};
+    // Checking whether contact exits or not.
+    const exists = await isExists(id);
+
+    // Returning 404 error when no contact available.
+    if (!exists) response.status(404).json({ message: "Record do not exits!" });
+
+    // Pulling original data object.
+    const currentMember = await getMemberById(id);
+
+    // Creating new object by combining `currentData` and `updatedData`. This will prevent from unwanted data wipeout or replacement. 
+    const updatedData: MemberSchemaType = merge(currentMember, body) as object;
+
+    debug(updatedData);
+
+    // Delete the contact from the database by ID.
+    const contact = await updateMemberById(id, updatedData);
+
+    // Respond with a success message.
+    response.status(200).json({ timestamp: Date.now(), message: "Successfully updated!", contact });
+});
+
 
 /**
  * Delete a member by ID.
  * 
  * @param request 
  * @param response 
+ * 
+ * @since 1.0.0
  */
-export const deleteMember = async (request: Request, response: Response) => {
-    try {
-        // Extract member ID from the request parameters.
-        const memberId = request.params.id;
+export const deleteMemberController = asyncHandler(async (request: Request, response: Response) => {
+    // TODO:
+    // - Delete method need to replace with soft delete.
+    // 
+    // Author: Abu Taher Muhammad <abutahermuhammad>
 
-        // Delete the member from the database by ID.
-        // Example: await MemberModel.findByIdAndRemove(memberId);
+    // Extract member ID from the request parameters.
+    const id = Number(request.params.id);
 
-        // Respond with a success message.
-        response.json({ message: "Member deleted successfully" });
-    } catch (error) {
-        console.error(error);
-        response.status(500).json({ message: "Internal server error" });
-    }
-};
+    // Checking whether member exits or not.
+    const exists = await isExists(id);
+
+    // Returning 404 error when no contact available.
+    if (!exists) response.status(404).json({ message: "Record not found!" });
+
+    // Delete the contact from the database by ID.
+    const member = await deleteMemberById(id);
+
+    // Respond with a success message.
+    response.status(200).json({ id: member.id, message: "Successfully deleted!", timestamp: Date.now() });
+});

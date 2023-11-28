@@ -1,4 +1,5 @@
-import { ContactSchemaType } from "../models/contact.model";
+import { omit } from "lodash";
+import { ContactSchemaType, MinimalContactSchemaType } from "../models/contact.model";
 import { RequestQuerySchemaType } from "../models/request.model";
 import prisma from '../prisma/prisma-client';
 import { debug } from "../utils/debug.util";
@@ -58,7 +59,7 @@ export const getContacts = async ({
             where: {
                 OR: [
                     {
-                        address_line_0: {
+                        address_line: {
                             contains: search || q,
                         }
                     },
@@ -87,7 +88,7 @@ export const getContacts = async ({
 
                     },
                     {
-                        country_id: {
+                        country: {
                             contains: search || q,
                         }
 
@@ -139,10 +140,10 @@ export const getContacts = async ({
  * @param param0 
  * @returns 
  */
-export const createContact = async (data: ContactSchemaType) => {
+export const createContact = async (data: MinimalContactSchemaType) => {
     try {
         const contact = await prisma.contact.create({
-            data: data,
+            data: omit(data, ['id']),
         });
 
         return contact;
@@ -193,18 +194,13 @@ export const updateContactById = async (id: number, data: ContactSchemaType) => 
             where: {
                 id
             },
-            data: data,
+            data: omit(data, [`id`]),
         });
 
         return contact;
     } catch (error) {
-        if (error.code === 'P2003') {
-            console.error("Foreign key constraint violation:", error);
-            throw new Error("Invalid country_id in the data.");
-        } else {
-            console.error("Error updating contact:", error);
-            throw new Error("Unable to update contact");
-        }
+        console.error("Error updating contact:", error);
+        throw new Error("Unable to update contact");
     }
 }
 

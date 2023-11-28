@@ -2,52 +2,77 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator docs {
+  provider = "node node_modules/prisma-docs-generator"
+  output   = "../docs/prisma"
+}
+
+generator dbml {
+  provider = "prisma-dbml-generator"
+  output   = "../docs/dbml"
+}
+
+generator zod {
+  provider              = "zod-prisma"
+  output                = "./../models"
+  modelCase             = "PascalCase"
+  imports               = "null"
+  prismaJsonNullability = "true"
+  relationModel         = "true"
+  useDecimalJs          = "true"
+  modelSuffix           = "Schema"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model Ambulance {
-  id                                 Int           @id @unique @default(autoincrement())
+  id                                 String        @id @default(cuid())
   created_at                         DateTime      @default(now()) @db.Timestamptz(3)
   updated_at                         DateTime      @updatedAt @db.Timestamptz(3)
   vehicle_number                     String        @db.VarChar(10)
-  ambulance_type                     String?       @db.VarChar(50)
-  person_id                          Int
-  version                            String        @default("v1") @db.VarChar
+  ambulance_type                     String?       @db.VarChar(255)
+  person                             Int
+  version                            String        @default("v1") @db.VarChar(10)
   organization                       Int?
+  equipment                          String[]      @db.VarChar(255)
+  contact                            Int?
+  color                              String?       @db.VarChar(10)
+  Contact                            Contact?      @relation(fields: [contact], references: [id], onDelete: NoAction)
   Organization                       Organization? @relation(fields: [organization], references: [id], map: "Ambulance_organizationId_fkey")
-  Person                             Person        @relation(fields: [person_id], references: [id], map: "Ambulance_personId_fkey")
+  Person                             Person        @relation(fields: [person], references: [id], map: "Ambulance_personId_fkey")
   Version_Ambulance_versionToVersion Version       @relation("Ambulance_versionToVersion", fields: [version], references: [slug], onDelete: NoAction)
 }
 
 model BloodCenter {
-  id                                        Int       @id @unique @default(autoincrement())
-  created_at                                DateTime  @default(now()) @db.Timestamptz(3)
-  updated_at                                DateTime  @updatedAt @db.Timestamptz(3)
-  established_at                            DateTime  @db.Timestamptz(3)
-  version                                   String    @default("v1") @db.VarChar
-  founder                                   Int?
+  id                                        String          @id @default(cuid())
+  created_at                                DateTime        @default(now()) @db.Timestamptz(3)
+  updated_at                                DateTime        @updatedAt @db.Timestamptz(3)
+  established_at                            DateTime        @db.Timestamptz(3)
+  version                                   String          @default("v1") @db.VarChar
+  founder                                   Int
   contact                                   Int?
-  location                                  Int?
-  Contact_BloodCenter_contactToContact      Contact?  @relation("BloodCenter_contactToContact", fields: [contact], references: [id], map: "BloodCenter_contactId_fkey")
-  Person                                    Person?   @relation(fields: [founder], references: [id], onDelete: NoAction)
-  Location                                  Location? @relation(fields: [location], references: [id], map: "BloodCenter_locationId_fkey")
-  Version                                   Version   @relation(fields: [version], references: [slug], onDelete: NoAction)
-  Contact_Contact_blood_centerToBloodCenter Contact[] @relation("Contact_blood_centerToBloodCenter")
+  title                                     String          @db.VarChar
+  Contact_BloodCenter_contactToContact      Contact?        @relation("BloodCenter_contactToContact", fields: [contact], references: [id], map: "BloodCenter_contactId_fkey")
+  Person                                    Person          @relation(fields: [founder], references: [id], onDelete: NoAction)
+  Version                                   Version         @relation(fields: [version], references: [slug], onDelete: NoAction)
+  BloodDonation                             BloodDonation[]
+  Contact_Contact_blood_centerToBloodCenter Contact[]       @relation("Contact_blood_centerToBloodCenter")
 }
 
 model Club {
-  id                                Int            @id @unique @default(autoincrement())
+  id                                String         @id @default(cuid())
   created_at                        DateTime       @default(now()) @db.Timestamptz(3)
   updated_at                        DateTime       @updatedAt @db.Timestamptz(3)
   name                              String         @db.VarChar(255)
   established_at                    DateTime       @db.Timestamptz(6)
-  contact                           Int
+  contact                           String
   version                           String         @default("v1") @db.VarChar
-  chairman                          Int
-  founder                           Int
-  vice_chairman                     Int
+  chairman                          String
+  founder                           String
+  vice_chairman                     String
   Person_Club_chairmanToPerson      Person         @relation("Club_chairmanToPerson", fields: [chairman], references: [id], map: "Club_chairman_id_fkey")
   Contact_Club_contactToContact     Contact        @relation("Club_contactToContact", fields: [contact], references: [id], map: "Club_contact_id_fkey")
   Person_Club_founderToPerson       Person         @relation("Club_founderToPerson", fields: [founder], references: [id], map: "Club_founder_id_fkey")
@@ -59,7 +84,7 @@ model Club {
 }
 
 model Contact {
-  id                                            Int           @id @unique @default(autoincrement())
+  id                                            String        @id @default(cuid())
   created_at                                    DateTime      @default(now()) @db.Timestamptz(3)
   updated_at                                    DateTime      @updatedAt @db.Timestamptz(3)
   address_line                                  String        @db.VarChar(255)
@@ -81,6 +106,7 @@ model Contact {
   blood_center                                  Int?
   donation                                      Int?
   hospital                                      Int?
+  Ambulance                                     Ambulance[]
   BloodCenter_BloodCenter_contactToContact      BloodCenter[] @relation("BloodCenter_contactToContact")
   Club_Club_contactToContact                    Club[]        @relation("Club_contactToContact")
   BloodCenter_Contact_blood_centerToBloodCenter BloodCenter?  @relation("Contact_blood_centerToBloodCenter", fields: [blood_center], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "Contact_blood_center_id_fkey")
@@ -95,9 +121,10 @@ model Contact {
 }
 
 model Country {
-  alpha_3    String    @id @db.VarChar(3)
+  id         String    @id @default(cuid())
+  alpha_3    String    @unique @db.VarChar(3)
   alpha_2    String    @unique @db.VarChar(2)
-  numeric    String    @db.VarChar(3)
+  numeric    String    @unique @db.VarChar(3)
   name       String    @db.VarChar(100)
   version    String    @db.VarChar
   created_at DateTime? @default(now()) @db.Timestamptz(6)
@@ -109,19 +136,18 @@ model Country {
 }
 
 model Location {
-  id          Int           @id @unique @default(autoincrement())
-  latitude    Float
-  longitude   Float
-  version     String        @default("v1") @db.VarChar
-  created_at  DateTime?     @db.Timestamptz(6)
-  updated_at  DateTime?     @db.Timestamptz(6)
-  BloodCenter BloodCenter[]
-  Hospital    Hospital[]
-  Version     Version       @relation(fields: [version], references: [slug], onDelete: NoAction)
+  id         String     @id @default(cuid())
+  latitude   Float
+  longitude  Float
+  version    String     @default("v1") @db.VarChar
+  created_at DateTime?  @db.Timestamptz(6)
+  updated_at DateTime?  @db.Timestamptz(6)
+  Hospital   Hospital[]
+  Version    Version    @relation(fields: [version], references: [slug], onDelete: NoAction)
 }
 
 model Donation {
-  id           Int          @id @unique @default(autoincrement())
+  id           String       @id @default(cuid())
   created_at   DateTime     @default(now()) @db.Timestamptz(3)
   updated_at   DateTime     @updatedAt @db.Timestamptz(3)
   amount       Int          @default(0)
@@ -138,7 +164,7 @@ model Donation {
 }
 
 model Member {
-  id                  Int        @id @unique @default(autoincrement())
+  id                  String     @id @default(cuid())
   created_at          DateTime   @default(now()) @db.Timestamptz(3)
   updated_at          DateTime   @updatedAt @db.Timestamptz(3)
   version             String     @default("v1") @db.VarChar
@@ -146,11 +172,11 @@ model Member {
   complications       String?
   medications         String?
   blood_disorders     String?
-  club_id             Int?
+  club_id             String?
   infectious_diseases String?
   last_blood_donation DateTime?  @db.Timestamptz(3)
   medical_conditions  String?
-  person_id           Int?
+  person_id           String?
   Donation            Donation[]
   Club                Club?      @relation(fields: [club_id], references: [id])
   Person              Person?    @relation(fields: [person_id], references: [id])
@@ -159,7 +185,7 @@ model Member {
 }
 
 model Request {
-  id               Int        @id @unique @default(autoincrement())
+  id               String     @id @default(cuid())
   created_at       DateTime   @default(now()) @db.Timestamptz(3)
   updated_at       DateTime   @updatedAt @db.Timestamptz(3)
   health_issue     String     @db.VarChar(255)
@@ -172,15 +198,15 @@ model Request {
   hospital_phone   String     @db.VarChar(255)
   hospital_email   String     @db.VarChar(255)
   version          String     @default("v1") @db.VarChar
-  memberId         Int?
-  personId         Int
+  memberId         String?
+  personId         String
   referral         Member?    @relation(fields: [memberId], references: [id])
   patient          Person     @relation(fields: [personId], references: [id])
   Version          Version    @relation(fields: [version], references: [slug], onDelete: NoAction)
 }
 
 model Support {
-  id             Int              @id @unique @default(autoincrement())
+  id             String           @id @default(cuid())
   created_at     DateTime         @default(now()) @db.Timestamptz(3)
   updated_at     DateTime         @updatedAt @db.Timestamptz(3)
   version        String           @default("v1") @db.VarChar
@@ -195,7 +221,7 @@ model Support {
 }
 
 model Team {
-  id                          Int          @id @unique @default(autoincrement())
+  id                          String       @id @default(cuid())
   created_at                  DateTime     @default(now()) @db.Timestamptz(3)
   updated_at                  DateTime     @updatedAt @db.Timestamptz(3)
   started_at                  DateTime     @db.Timestamptz(3)
@@ -210,59 +236,35 @@ model Team {
   Version                     Version      @relation(fields: [version], references: [slug], onDelete: NoAction)
 }
 
-model User {
-  id                Int                @id @default(autoincrement())
-  username          String?            @unique @db.VarChar
-  email             String             @unique @db.VarChar
-  password          String
-  status            AccountStatus      @default(PENDING)
-  ip                String             @db.VarChar
-  two_factor_auth   Int
-  social_login      Int
-  logins            Int
-  person            Int
-  settings          Int
-  version           String             @default("v1") @db.VarChar
-  created_at        DateTime           @default(now()) @db.Timestamptz(3)
-  updated_at        DateTime           @updatedAt @db.Timestamptz(3)
-  securityQuestions SecurityQuestion[]
-  LoginRecord       LoginRecord        @relation(fields: [logins], references: [id], onDelete: SetNull, map: "User_loginRecordId_fkey")
-  Person            Person             @relation(fields: [person], references: [id], map: "User_personId_fkey")
-  SocialMediaLinks  SocialMediaLinks   @relation(fields: [social_login], references: [id], onDelete: SetNull, map: "User_socialMediaLinksId_fkey")
-  TwoFactorAuth     TwoFactorAuth      @relation(fields: [two_factor_auth], references: [id], onDelete: SetNull, map: "User_twoFactorAuthId_fkey")
-  UserSettings      UserSettings       @relation(fields: [settings], references: [id], map: "User_userSettingsId_fkey")
-  Version           Version            @relation(fields: [version], references: [slug], onDelete: NoAction)
-  role              UserRole[]
-}
-
 model SecurityQuestion {
-  id         Int      @id @unique @default(autoincrement())
-  question   String
-  answer     String
-  userId     Int
-  created_at DateTime @default(now()) @db.Timestamptz(3)
-  updated_at DateTime @updatedAt @db.Timestamptz(3)
-  version    String   @default("v1") @db.VarChar
-  user       User     @relation(fields: [userId], references: [id])
-  Version    Version  @relation(fields: [version], references: [slug], onDelete: NoAction)
+  id           String         @id @default(cuid())
+  question     String
+  answer       String
+  userId       String
+  created_at   DateTime       @default(now()) @db.Timestamptz(3)
+  updated_at   DateTime       @updatedAt @db.Timestamptz(3)
+  version      String         @default("v1") @db.VarChar
+  user         User           @relation(fields: [userId], references: [id])
+  Version      Version        @relation(fields: [version], references: [slug], onDelete: NoAction)
+  UserSettings UserSettings[]
 }
 
 model UserRole {
-  id         Int      @id @unique @default(autoincrement())
+  id         String   @id @default(cuid())
   name       String   @default("user") @db.VarChar
-  userId     Int
+  user_id    String
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @updatedAt @db.Timestamptz(3)
   version    String   @default("v1") @db.VarChar
-  User       User     @relation(fields: [userId], references: [id])
+  User       User     @relation(fields: [user_id], references: [id], map: "UserRole_userId_fkey")
   Version    Version  @relation(fields: [version], references: [slug], onDelete: NoAction)
 }
 
 model TwoFactorAuth {
-  id         Int      @id @unique @default(autoincrement())
-  isEnabled  Boolean
-  secretKey  String?
-  userId     Int
+  id         String   @id @default(cuid())
+  is_enabled Boolean
+  secret_key String?
+  user_id    String
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @updatedAt @db.Timestamptz(3)
   version    String   @default("v1") @db.VarChar
@@ -271,11 +273,11 @@ model TwoFactorAuth {
 }
 
 model SocialMediaLinks {
-  id         Int      @id @unique @default(autoincrement())
+  id         String   @id @default(cuid())
   facebook   String?
   twitter    String?
   instagram  String?
-  userId     Int
+  userId     String
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @updatedAt @db.Timestamptz(3)
   version    String   @default("v1") @db.VarChar
@@ -284,7 +286,7 @@ model SocialMediaLinks {
 }
 
 model LoginRecord {
-  id                   Int                    @id @unique @default(autoincrement())
+  id                   String                 @id @default(cuid())
   user                 Int
   ip_address           String                 @db.VarChar
   user_agent           String                 @db.VarChar
@@ -306,7 +308,7 @@ model LoginRecord {
 }
 
 model Person {
-  id                              Int              @id @unique @default(autoincrement())
+  id                              String           @id @default(cuid())
   created_at                      DateTime         @default(now()) @db.Timestamptz(3)
   updated_at                      DateTime         @updatedAt @db.Timestamptz(3)
   first_name                      String           @db.VarChar(100)
@@ -318,14 +320,15 @@ model Person {
   gender                          Gender?
   version                         String           @default("v1") @db.VarChar
   avatar                          String?
-  contact_id                      Int
-  teamId                          Int?
+  contact_id                      String
+  teamId                          String?
   bid                             String?          @db.VarChar(52)
   driving                         String?          @db.VarChar(52)
   nid                             String?          @db.VarChar(52)
   passport                        String?          @db.VarChar(52)
   Ambulance                       Ambulance[]
   BloodCenter                     BloodCenter[]
+  BloodDonation                   BloodDonation[]
   Club_Club_chairmanToPerson      Club[]           @relation("Club_chairmanToPerson")
   Club_Club_founderToPerson       Club[]           @relation("Club_founderToPerson")
   Club_Club_vice_chairmanToPerson Club[]           @relation("Club_vice_chairmanToPerson")
@@ -343,7 +346,7 @@ model Person {
 }
 
 model Hospital {
-  id                                 Int           @id @unique @default(autoincrement())
+  id                                 String        @id @default(cuid())
   created_at                         DateTime      @default(now()) @db.Timestamptz(3)
   updated_at                         DateTime      @updatedAt @db.Timestamptz(3)
   name                               String        @db.VarChar(255)
@@ -373,37 +376,36 @@ model Hospital {
 }
 
 model UserSettings {
-  id                     Int         @id @unique @default(autoincrement())
-  created_at             DateTime    @default(now()) @db.Timestamptz(3)
-  updated_at             DateTime    @updatedAt @db.Timestamptz(3)
-  language               Language    @default(ENGLISH)
-  time_format            TimeFormat  @default(H12PM)
-  date_format            DateFormat  @default(DY_MONTH_COMMA)
-  timezone               Timezone    @default(GMT_06_Astana_Dhaka_Almaty_Urumqi)
-  theme                  Theme?      @default(LIGHT)
-  email_notifications    Boolean     @default(true)
-  phone_notification     Boolean     @default(true)
-  push_notifications     Boolean     @default(true)
+  id                     String            @id @default(cuid())
+  created_at             DateTime          @default(now()) @db.Timestamptz(3)
+  updated_at             DateTime          @updatedAt @db.Timestamptz(3)
+  language               Language          @default(ENGLISH)
+  time_format            TimeFormat        @default(H12PM)
+  date_format            DateFormat        @default(DY_MONTH_COMMA)
+  timezone               Timezone          @default(GMT_06_Astana_Dhaka_Almaty_Urumqi)
+  theme                  Theme?            @default(LIGHT)
+  email_notifications    Boolean           @default(true)
+  phone_notification     Boolean           @default(true)
+  push_notifications     Boolean           @default(true)
   two_factor_auth        Boolean?
-  login_record_id        Int
-  loginRecordId          Int
+  login_record_id        String
   high_contrast_mode     Boolean?
-  in_app_notifications   Boolean?    @default(true)
+  in_app_notifications   Boolean?          @default(true)
   key_board_shortcut     Boolean?
   notification_frequency String?
   notification_sound     String?
-  notification_vibrate   Boolean?    @default(true)
+  notification_vibrate   Boolean?          @default(true)
   password_reset         Boolean?
-  security_answer        String?     @db.VarChar(255)
-  security_question      String?     @db.VarChar(255)
-  version                String      @default("v1") @db.VarChar
+  version                String            @default("v1") @db.VarChar
+  security_question      Int?
   User                   User[]
-  login_records          LoginRecord @relation(fields: [loginRecordId], references: [id])
-  Version                Version     @relation(fields: [version], references: [slug], onDelete: NoAction)
+  LoginRecord            LoginRecord       @relation(fields: [login_record_id], references: [id], map: "UserSettings_loginRecordId_fkey")
+  SecurityQuestion       SecurityQuestion? @relation(fields: [security_question], references: [id], onDelete: NoAction)
+  Version                Version           @relation(fields: [version], references: [slug], onDelete: NoAction)
 }
 
 model OrganizationSettings {
-  id                     Int            @id @unique @default(autoincrement())
+  id                     String         @id @default(cuid())
   created_at             DateTime       @default(now()) @db.Timestamptz(3)
   updated_at             DateTime       @updatedAt @db.Timestamptz(3)
   language               Language       @default(ENGLISH)
@@ -415,7 +417,7 @@ model OrganizationSettings {
   phone_notification     Boolean        @default(true)
   push_notifications     Boolean        @default(true)
   two_factor_auth        Boolean?
-  loginRecordId          Int?
+  loginRecordId          String?
   accountDeactivation    Boolean?
   avatar                 String?
   clearBrowsingData      Boolean?
@@ -440,15 +442,15 @@ model OrganizationSettings {
 }
 
 model Organization {
-  id                     Int                  @id @unique @default(autoincrement())
+  id                     String               @id @default(cuid())
   created_at             DateTime             @default(now()) @db.Timestamptz(3)
   updated_at             DateTime             @updatedAt @db.Timestamptz(3)
   org_type               OrgType
-  org_id                 Int
+  org_id                 String
   Volunteer              Json
-  personId               Int
-  organizationSettingsId Int
-  clubId                 Int?
+  personId               String
+  organizationSettingsId String
+  clubId                 String?
   version                String               @default("v1") @db.VarChar
   Ambulance              Ambulance[]
   Donation               Donation[]
@@ -462,7 +464,7 @@ model Organization {
 }
 
 model SupportMessage {
-  id           Int          @id @unique
+  id           String       @id @default(cuid())
   created_at   DateTime     @db.Timestamptz(6)
   updated_at   DateTime     @db.Timestamptz(6)
   organization Int
@@ -477,7 +479,7 @@ model SupportMessage {
 }
 
 model Version {
-  id                                   Int                    @unique
+  id                                   String                 @id @default(cuid())
   slug                                 String                 @unique @db.VarChar
   title                                String                 @db.VarChar(255)
   description                          String?
@@ -486,6 +488,7 @@ model Version {
   version                              String?                @db.VarChar
   Ambulance_Ambulance_versionToVersion Ambulance[]            @relation("Ambulance_versionToVersion")
   BloodCenter                          BloodCenter[]
+  BloodDonation                        BloodDonation[]
   Club                                 Club[]
   Contact                              Contact[]
   Country                              Country[]
@@ -513,7 +516,7 @@ model Version {
 }
 
 model Device {
-  id           Int           @id
+  id           String        @id @default(cuid())
   created_at   DateTime?     @db.Timetz(6)
   updated_at   DateTime?     @db.Timetz(6)
   name         String?       @db.VarChar
@@ -527,6 +530,92 @@ model Device {
   version      String        @db.VarChar
   Version      Version       @relation(fields: [version], references: [slug], onDelete: NoAction)
   LoginRecord  LoginRecord[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id                String             @id @default(cuid())
+  username          String?            @unique @db.VarChar
+  email             String             @unique @db.VarChar
+  password          String
+  status            AccountStatus      @default(PENDING)
+  ip                String             @db.VarChar
+  two_factor_auth   Int
+  social_login      Int
+  logins            Int
+  person            Int
+  settings          Int
+  version           String             @default("v1") @db.VarChar
+  created_at        DateTime           @default(now()) @db.Timestamptz(3)
+  updated_at        DateTime           @updatedAt @db.Timestamptz(3)
+  securityQuestions SecurityQuestion[]
+  LoginRecord       LoginRecord        @relation(fields: [logins], references: [id], onDelete: SetNull, map: "User_loginRecordId_fkey")
+  Person            Person             @relation(fields: [person], references: [id], map: "User_personId_fkey")
+  SocialMediaLinks  SocialMediaLinks   @relation(fields: [social_login], references: [id], onDelete: SetNull, map: "User_socialMediaLinksId_fkey")
+  TwoFactorAuth     TwoFactorAuth      @relation(fields: [two_factor_auth], references: [id], onDelete: SetNull, map: "User_twoFactorAuthId_fkey")
+  UserSettings      UserSettings       @relation(fields: [settings], references: [id], map: "User_userSettingsId_fkey")
+  Version           Version            @relation(fields: [version], references: [slug], onDelete: NoAction)
+  UserRole          UserRole[]
+  Account           Account[]
+  Session           Session[]
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model BloodDonation {
+  id              String      @id @default(cuid())
+  donor_id        String
+  organization_id String
+  amount          Int
+  version         String      @db.VarChar(10)
+  donated_at      DateTime    @default(now()) @db.Timetz(6)
+  referred_by     String?     @db.VarChar
+  test_done       Json?       @db.Json
+  bags            String[]    @db.VarChar
+  media_done      String?     @db.VarChar(255)
+  media_used      String?     @db.VarChar(255)
+  incubation      String?
+  note            String?
+  created_at      DateTime?   @default(now()) @db.Timestamptz(6)
+  updated_at      DateTime?   @db.Timestamptz(6)
+  cabin_no        String?     @db.VarChar(10)
+  reg_no          String?     @db.VarChar(50)
+  BloodCenter     BloodCenter @relation(fields: [organization_id], references: [id], onDelete: NoAction, map: "BloodDonation_blood_center_id_fkey")
+  Person          Person      @relation(fields: [donor_id], references: [id], onDelete: NoAction)
+  Version         Version     @relation(fields: [version], references: [slug], onDelete: NoAction)
 }
 
 enum Gender {

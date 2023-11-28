@@ -3,7 +3,7 @@ import { ValidationChain, check, validationResult } from 'express-validator';
 
 /**
  * Validator Middleware
- * 
+ *
  * This middleware performs validation of request data using express-validator.
  * It checks for validation errors and sends a response with validation errors
  * if any are found.
@@ -15,7 +15,7 @@ export const validatorMiddleware = (
 ) => {
   // Perform validation using express-validator
   const errors = validationResult(req);
-  
+
   // If there are validation errors, send a response with the errors
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.array() });
@@ -27,7 +27,7 @@ export const validatorMiddleware = (
 
 /**
  * Example Validator
- * 
+ *
  * This is an example of how to use the check function from express-validator
  * to validate a specific field in a request.
  */

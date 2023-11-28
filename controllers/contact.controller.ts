@@ -1,8 +1,8 @@
 import config from 'config';
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import * as _ from 'lodash';
-import { ContactSchema, ContactSchemaType } from "../models/contact.model";
+import { merge } from 'lodash';
+import { ContactSchemaType, MinimalContactSchema } from "../models/contact.model";
 import { RequestQuerySchema, SinglePageRequestParameterSchema } from "../models/request.model";
 import { createContact, deleteContactById, getContactById, getContacts, isExists, updateContactById } from "../services/contact.service";
 import { debug } from '../utils/debug.util';
@@ -16,7 +16,7 @@ const PROJECT_VERSION = config.get('version');
  * 
  * @since 1.0.0
  */
-export const getContactsController = asyncHandler(async (request: Request, response: Response, next: NextFunction): Promise<void> => {
+export const getContactsController = asyncHandler(async (request: Request, response: Response): Promise<void> => {
     const { context, ...queries } = RequestQuerySchema.parse(request.query);
     const contacts = await getContacts(queries) as ContactSchemaType[];
 
@@ -37,7 +37,7 @@ export const getContactsController = asyncHandler(async (request: Request, respo
  */
 export const postContact = asyncHandler(async (request: Request, response: Response) => {
     // Extracting body object.
-    const body = ContactSchema.parse(request.body);
+    const body = MinimalContactSchema.parse(request.body);
 
     // Create a new contact in the database.
     const contact = await createContact(body);
@@ -77,16 +77,13 @@ export const getContact = asyncHandler(async (request: Request, response: Respon
  * 
  * @since 1.0.0
  */
-export const patchContact = asyncHandler(async (request: Request, response: Response) => {
+export const patchContactController = asyncHandler(async (request: Request, response: Response) => {
     // Extracting URL->query & body object.
     const params = SinglePageRequestParameterSchema.parse(request.params);
-    const body = ContactSchema.parse(request.body);
+    const body = MinimalContactSchema.parse(request.body);
 
     // Converting `id` from string to number
     const id = Number(params.id);
-
-    // When the `id` provided with URL query doesn't match with the `id` in the body throws an error.
-    if (id !== body.id) response.status(404).json({ message: "Inconsistency in data!" });
 
     // Checking whether contact exits or not.
     const exists = await isExists(id);
@@ -98,7 +95,7 @@ export const patchContact = asyncHandler(async (request: Request, response: Resp
     const currentContact = await getContactById(id);
 
     // Creating new object by combining `currentData` and `updatedData`. This will prevent from unwanted data wipeout or replacement. 
-    const updatedData: ContactSchemaType = await _.merge(currentContact, body) as object;
+    const updatedData: ContactSchemaType = merge(currentContact, body) as object;
 
     debug(updatedData);
 
@@ -117,7 +114,7 @@ export const patchContact = asyncHandler(async (request: Request, response: Resp
  * 
  * @since 1.0.0
  */
-export const deleteContact = asyncHandler(async (request: Request, response: Response) => {
+export const deleteContactController = asyncHandler(async (request: Request, response: Response) => {
     // TODO:
     // - Delete method need to replace with soft delete.
     // 

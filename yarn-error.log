@@ -1,5 +1,5 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Users\Muhammad\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add lodash
+  C:\Program Files\nodejs\node.exe C:\Users\Muhammad\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add --dev prisma@latest │
 
 PATH: 
   C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\Git\cmd;C:\Program Files\nodejs\;C:\Users\Muhammad\AppData\Local\Microsoft\WindowsApps;;C:\Users\Muhammad\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\Muhammad\AppData\Roaming\npm;C:\Users\Muhammad\AppData\Local\Programs\oh-my-posh\bin
@@ -14,7 +14,15 @@ Platform:
   win32 x64
 
 Trace: 
-  Error: EPERM: operation not permitted, unlink 'D:\Lab\simbio-express-server\node_modules\prisma\engines\61e140623197a131c2a6189271ffee05a7aa9a59\query_engine-windows.dll.node'
+  TypeError [ERR_UNESCAPED_CHARACTERS]: https://registry.yarnpkg.com/│: Request path contains unescaped characters
+      at new NodeError (node:internal/errors:405:5)
+      at new ClientRequest (node:_http_client:183:13)
+      at Object.request (node:https:358:10)
+      at module.exports.Request.start (C:\Users\Muhammad\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141452:32)
+      at module.exports.Request.end (C:\Users\Muhammad\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:142211:10)
+      at end (C:\Users\Muhammad\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141265:14)
+      at Immediate.<anonymous> (C:\Users\Muhammad\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141279:7)
+      at process.processImmediate (node:internal/timers:476:21)
 
 npm manifest: 
   {
@@ -48,6 +56,7 @@ npm manifest:
       "@types/cookie-session": "^2.0.45",
       "@types/cors": "^2.8.14",
       "@types/csrf": "^3.1.0",
+      "@types/lodash": "^4.14.199",
       "@types/morgan": "^1.9.5",
       "@types/multer": "^1.4.7",
       "@types/multer-s3": "^3.0.0",
@@ -65,6 +74,7 @@ npm manifest:
       "express-session": "^1.17.3",
       "express-validator": "^7.0.1",
       "helmet": "^7.0.0",
+      "lodash": "^4.17.21",
       "morgan": "^1.10.0",
       "multer": "^1.4.5-lts.1",
       "multer-s3": "^3.0.1",
@@ -2190,6 +2200,11 @@ Lockfile:
     version "1.0.2"
     resolved "https://registry.npmjs.org/@types/keygrip/-/keygrip-1.0.2.tgz"
     integrity sha512-GJhpTepz2udxGexqos8wgaBx4I/zWIDPh/KOGEwAqtuGDkOUJu5eFvwmdBX4AmB8Odsr+9pHCQqiAqDL/yKMKw==
+  
+  "@types/lodash@^4.14.199":
+    version "4.14.199"
+    resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.199.tgz#c3edb5650149d847a277a8961a7ad360c474e9bf"
+    integrity sha512-Vrjz5N5Ia4SEzWWgIVwnHNEnb1UE1XMkvY5DGXrAeOGE9imk0hgTHh5GyDjLDJi9OTCn9oo9dXH1uToK1VRfrg==
   
   "@types/mime@*":
     version "3.0.1"
@@ -5112,7 +5127,7 @@ Lockfile:
   
   lodash@^4.17.21:
     version "4.17.21"
-    resolved "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz"
+    resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
     integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
   
   log4js@^6.9.1:
