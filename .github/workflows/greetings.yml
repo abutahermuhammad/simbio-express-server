@@ -1,0 +1,30 @@
+name: Greeting
+on: [pull_request, issues]
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Greet on pull request
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v4
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: 'Hello @${{ github.actor }}, thank you for your pull request! We appreciate your contribution to this project. 🙌'
+          })
+    - name: Greet on issue
+      if: github.event_name == 'issues'
+      uses: actions/github-script@v4
+      with:
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: 'Hello @${{ github.actor }}, thank you for opening an issue! We will try to resolve it as soon as possible. 🙏'
+          })
