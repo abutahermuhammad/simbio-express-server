@@ -1,19 +1,19 @@
 // Import the cluster module from Node.js
-// This module allows us to create a cluster of processes that can share server ports 
+// This module allows us to create a cluster of processes that can share server ports
 import cluster from "cluster";
 // Import the Express type from the express module
-// This type represents the Express application object that we use to create our web server 
+// This type represents the Express application object that we use to create our web server
 import { Express } from "express";
 // Import the NUM_WORKERS and PORT constants from the server configuration file
-// These constants define how many worker processes we want to create and what port they will listen on 
+// These constants define how many worker processes we want to create and what port they will listen on
 import config from 'config';
-import { debugServer } from "../utils/debug.util";
+import { debugServer } from "../src/utils/debug.util";
 
 /**
- * Function to initialize the server 
- * 
+ * Function to initialize the server
+ *
  * @param app {Express}
- * 
+ *
  * @since 1.0.0
  */
 const initializeServer = (app: Express) => {

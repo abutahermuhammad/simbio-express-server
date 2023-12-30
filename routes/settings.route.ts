@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getSetting, getSettings, patchSetting, postSetting } from "../controllers/setting.controller";
+import { getSetting, getSettings, patchSetting, postSetting } from "../src/controllers/setting.controller";
 
 // Creating an Express Router instance
 const router = Router();

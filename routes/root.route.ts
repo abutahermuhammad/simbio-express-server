@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getStatus } from "../controllers/root.controller";
+import { getStatus } from "../src/controllers/root.controller";
 
 // Creating an Express Router instance
 const router = Router();

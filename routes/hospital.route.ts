@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deleteHospital, getHospital, getHospitals, patchHospital, postHospital } from "../controllers/hospital.controller";
+import { deleteHospital, getHospital, getHospitals, patchHospital, postHospital } from "../src/controllers/hospital.controller";
 
 // Creating an Express Router instance
 const router = Router();

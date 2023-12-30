@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deleteLog, getLog, getLogs, postLog } from "../controllers/log.controller";
+import { deleteLog, getLog, getLogs, postLog } from "../src/controllers/log.controller";
 
 // Creating an Express Router instance
 const router = Router();

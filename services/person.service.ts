@@ -1,10 +1,10 @@
 import { omit } from "lodash";
-import { PersonSchemaType } from "../models/person.model";
+import { PersonSchemaType } from "../src/models/person.model";
 
 /**
  * Get Contacts
- * @param param0 
- * @returns 
+ * @param param0
+ * @returns
  */
 export const createPerson = async (data: PersonSchemaType) => {
     try {

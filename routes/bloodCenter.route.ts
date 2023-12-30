@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deleteBloodCenter, getBloodCenter, getBloodCenters, patchBloodCenter, postBloodCenter } from "../controllers/bloodCenter.controller";
+import { deleteBloodCenter, getBloodCenter, getBloodCenters, patchBloodCenter, postBloodCenter } from "../src/controllers/bloodCenter.controller";
 
 // Creating an Express Router instance
 const router = Router();

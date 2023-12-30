@@ -1,16 +1,16 @@
 import { omit } from "lodash";
-import { MemberSchemaType } from "../models/member.model";
-import { RequestQuerySchemaType } from "../models/request.model";
-import { debug } from "../utils/debug.util";
+import { MemberSchemaType } from "../src/models/member.model";
+import { RequestQuerySchemaType } from "../src/models/request.model";
+import { debug } from "../src/utils/debug.util";
 
 
 /**
  * isExists
  * This function checks whether member with a given id is exists or not.
- * 
- * @param id 
- * @returns 
- * 
+ *
+ * @param id
+ * @returns
+ *
  * @since 1.0.0
  */
 export const isExists = async (id: number) => {
@@ -31,8 +31,8 @@ export const isExists = async (id: number) => {
 
 /**
  * Get Contacts
- * @param param0 
- * @returns 
+ * @param param0
+ * @returns
  */
 export const getMembers = async ({
     search = "",
@@ -136,8 +136,8 @@ export const getMembers = async ({
 
 /**
  * Get Contacts
- * @param param0 
- * @returns 
+ * @param param0
+ * @returns
  */
 export const createMember = async (data: MemberSchemaType) => {
     try {
@@ -185,10 +185,10 @@ export const getMemberById = async (id: number) => {
 /**
  * updateMemberById
  * This will update a member with respected id.
- * 
- * @param id 
- * @returns 
- * 
+ *
+ * @param id
+ * @returns
+ *
  * @since 1.0.0
  */
 export const updateMemberById = async (id: number, data: MemberSchemaType) => {
@@ -212,10 +212,10 @@ export const updateMemberById = async (id: number, data: MemberSchemaType) => {
 /**
  * deleteMemberById
  * This will delete Member matched with given id.
- * 
- * @param id 
- * @returns 
- * 
+ *
+ * @param id
+ * @returns
+ *
  * @since 1.0.0
  */
 export const deleteMemberById = async (id: number) => {

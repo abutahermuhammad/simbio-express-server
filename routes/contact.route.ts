@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deleteContactController, getContact, getContactsController, patchContactController, postContact } from "../controllers/contact.controller";
+import { deleteContactController, getContact, getContactsController, patchContactController, postContact } from "../src/controllers/contact.controller";
 
 // Creating an Express Router instance
 const router = Router();

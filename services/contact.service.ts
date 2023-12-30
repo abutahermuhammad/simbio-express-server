@@ -1,16 +1,16 @@
 import { omit } from "lodash";
-import { ContactSchemaType, MinimalContactSchemaType } from "../models/contact.model";
-import { RequestQuerySchemaType } from "../models/request.model";
 import prisma from '../prisma/prisma-client';
-import { debug } from "../utils/debug.util";
+import { ContactSchemaType, MinimalContactSchemaType } from "../src/models/contact.model";
+import { RequestQuerySchemaType } from "../src/models/request.model";
+import { debug } from "../src/utils/debug.util";
 
 /**
  * isExists
  * This function checks whether contact with a given id is exists or not.
- * 
- * @param id 
- * @returns 
- * 
+ *
+ * @param id
+ * @returns
+ *
  * @since 1.0.0
  */
 export const isExists = async (id: number) => {
@@ -30,8 +30,8 @@ export const isExists = async (id: number) => {
 
 /**
  * Get Contacts
- * @param param0 
- * @returns 
+ * @param param0
+ * @returns
  */
 export const getContacts = async ({
     search = "",
@@ -137,8 +137,8 @@ export const getContacts = async ({
 
 /**
  * Get Contacts
- * @param param0 
- * @returns 
+ * @param param0
+ * @returns
  */
 export const createContact = async (data: MinimalContactSchemaType) => {
     try {
@@ -157,10 +157,10 @@ export const createContact = async (data: MinimalContactSchemaType) => {
 /**
  * getContactById
  * This will parse contact matched with given id.
- * 
- * @param id 
- * @returns 
- * 
+ *
+ * @param id
+ * @returns
+ *
  * @since 1.0.0
  */
 export const getContactById = async (id: number) => {
@@ -181,10 +181,10 @@ export const getContactById = async (id: number) => {
 /**
  * updateContactById
  * This will update a contact with respected id.
- * 
- * @param id 
- * @returns 
- * 
+ *
+ * @param id
+ * @returns
+ *
  * @since 1.0.0
  */
 export const updateContactById = async (id: number, data: ContactSchemaType) => {
@@ -208,10 +208,10 @@ export const updateContactById = async (id: number, data: ContactSchemaType) => 
 /**
  * deleteContactById
  * This will delete contact matched with given id.
- * 
- * @param id 
- * @returns 
- * 
+ *
+ * @param id
+ * @returns
+ *
  * @since 1.0.0
  */
 export const deleteContactById = async (id: number) => {

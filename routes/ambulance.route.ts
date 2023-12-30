@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { deleteAmbulance, getAmbulance, getAmbulances, patchAmbulance, postAmbulance } from "../controllers/ambulance.controller";
+import { deleteAmbulance, getAmbulance, getAmbulances, patchAmbulance, postAmbulance } from "../src/controllers/ambulance.controller";
 
 // Creating an Express Router instance
 const router = Router();

@@ -3,7 +3,7 @@ import {
     deleteMemberController,
     getMemberController,
     getMembersController, patchMemberController, postMemberController
-} from "../controllers/member.controller";
+} from "../src/controllers/member.controller";
 
 // Creating an Express Router instance
 const router = Router();

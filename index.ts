@@ -1,9 +1,9 @@
 import config from 'config';
 import express, { Express } from 'express';
-import { initializeMiddlewares } from './middlewares';
 import { initializeRoutes } from './routes';
 import { initializeServer } from './services/server.service';
-import { debug } from './utils/debug.util';
+import { initializeMiddlewares } from './src/middlewares';
+import { debug } from './src/utils/debug.util';
 // import debug from ('debug')('app:startup');
 
 
@@ -29,10 +29,10 @@ initializeRoutes(app);
 
 /**
  * Initialize Server
- * 
+ *
  * This function initializes the Express server using the provided app instance.
  * It sets up middleware, routes, and starts the server.
- * 
+ *
  * @since 1.0.0
  */
 initializeServer(app);
