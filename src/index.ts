@@ -3,6 +3,7 @@ import express, { Express } from 'express';
 import { initializeServer } from './services/server.service';
 // import { debug } from './src/utils/debug.util';
 // import debug from ('debug')('app:startup');
+import { initializeMiddlewares } from './middlewares';
 import router from './routes';
 
 
@@ -20,7 +21,7 @@ app.disable('x-powered-by');
 app.disable('trust proxy')
 
 // Initialize middlewares for the Express app
-// initializeMiddlewares(app);
+initializeMiddlewares(app);
 
 
 app.get('/', (req, res) => {
