@@ -7,6 +7,10 @@ const router = express.Router();
  *  - Swagger
  *  - DBML
  */
+
+router.get('/', (req, res) => {
+    res.status(200).json({ message: 'Doc route' });
+})
 // router.post(
 //     '/create-student',
 //     auth(USER_ROLE.admin),

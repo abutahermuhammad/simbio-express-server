@@ -1,8 +1,8 @@
 import config from 'config';
 import express, { Express } from 'express';
 import { initializeRoutes } from './routes';
-import { initializeServer } from './services/server.service';
 import { initializeMiddlewares } from './src/middlewares';
+import { initializeServer } from './src/services/server.service';
 import { debug } from './src/utils/debug.util';
 // import debug from ('debug')('app:startup');
 

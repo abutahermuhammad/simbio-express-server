@@ -7,7 +7,7 @@ import { Express } from "express";
 // Import the NUM_WORKERS and PORT constants from the server configuration file
 // These constants define how many worker processes we want to create and what port they will listen on
 import config from 'config';
-import { debugServer } from "../src/utils/debug.util";
+import { debugServer } from "../utils/debug.util";
 
 /**
  * Function to initialize the server
@@ -59,6 +59,7 @@ const initializeServer = (app: Express) => {
         // Each worker process runs the Express app and listens on the specified PORT.
         // This creates a web server that can handle HTTP requests and responses using the app object.
         app.listen(config.get<number>("server.port"), () => {
+            console.log("Server listening on port " + config.get<number>("server.port"));
             // Log a message to indicate that a worker process started and show its process ID and port number.
             debugServer(`Worker process ${process.pid} started. Listening on port ${config.get<number>("server.port")}`);
         });
