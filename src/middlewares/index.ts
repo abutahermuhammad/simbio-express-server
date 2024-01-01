@@ -8,8 +8,6 @@ import jsonMiddleware from "./json.middleware";
 import loggerMiddleware from "./logger.middleware";
 import rateLimitMiddleware from "./rate-limit.middleware";
 import requestValidateMiddleware from "./request-validate.middleware";
-import securityHeaderMiddleware from "./security-header.middleware";
-import sessionMiddleware from "./session.middleware";
 import staticDirMiddleware from "./staticDir.middleware";
 import urlEncodedMiddleware from "./url-encoded.middleware";
 
@@ -20,8 +18,8 @@ const middlewares: { middleware: RequestHandler | ErrorRequestHandler; descripti
   { middleware: compressionMiddleware, description: "Response Compressor" },  // Compresses HTTP responses for better efficiency.
   { middleware: jsonMiddleware, description: "JSON Supporter." },  // Adds JSON support for request and response handling.
   { middleware: cookieParserMiddleware, description: "Cookie Parser." },  // Parses incoming cookies from requests.
-  { middleware: sessionMiddleware, description: "Cookie Session." }, // Manages session data using cookies.
-  { middleware: securityHeaderMiddleware, description: "Security Header." },  // Enhances security by setting HTTP headers.
+  // { middleware: sessionMiddleware, description: "Cookie Session." }, // Manages session data using cookies.
+  // { middleware: securityHeaderMiddleware, description: "Security Header." },  // Enhances security by setting HTTP headers.
   { middleware: staticDirMiddleware, description: "Static Directories." },  // Serves static files from specified directories.
   { middleware: urlEncodedMiddleware, description: "URL Encode Handler." },  // Handles URL encoded data.
   { middleware: requestValidateMiddleware, description: "Request validator Handler." },  // Handles API request validation.

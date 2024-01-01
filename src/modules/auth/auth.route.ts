@@ -1,4 +1,5 @@
 import express from 'express';
+import { forgotPasswordController, loginController, logoutController, refreshController, registerController, resendController, resetPasswordController, successPageController, verifyController } from './auth.controller';
 
 const router = express.Router();
 
@@ -21,9 +22,17 @@ const router = express.Router();
  *  - linkedin
  */
 
-router.get('/', (req, res) => {
-    res.status(200).json({ message: 'auth route' });
-})
+
+router.get('/register', registerController);
+router.get('/verify', verifyController);
+router.get('/resend', resendController);
+router.get('/login', loginController);
+router.get('/refresh', refreshController);
+router.get('/logout', logoutController);
+router.get('/forgot-password', forgotPasswordController);
+router.get('/reset-password', resetPasswordController);
+router.get('/success', successPageController);
+
 // router.post(
 //     '/create-student',
 //     auth(USER_ROLE.admin),

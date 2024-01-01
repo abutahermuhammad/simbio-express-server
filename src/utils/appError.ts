@@ -11,7 +11,7 @@ export class AppError extends Error {
      * @param {string} [stack=''] - The stack trace.
      */
     // constructor(statusCode: number, message: string, description: string, stack = '') {
-    constructor(statusCode: number, message: string, stack = '') {
+    constructor(statusCode: number = 500, message: string = "Internal Server Error", stack: string = '') {
         super(message);
         // Object.setPrototypeOf(this, new.target.prototype);  // Restore prototype chain.
         // this.name = this.constructor.name;

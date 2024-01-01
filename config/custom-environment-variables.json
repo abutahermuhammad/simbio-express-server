@@ -1,4 +1,7 @@
 {
+    "server": {
+        "env": "NODE_ENV"
+    },
     "database": {
         "host": "DATABASE_URL"
     }

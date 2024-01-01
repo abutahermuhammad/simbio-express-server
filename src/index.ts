@@ -24,16 +24,9 @@ app.disable('trust proxy')
 // Initialize middlewares for the Express app
 initializeMiddlewares(app);
 
-// Error handlers
-// app.use(globalErrorHandler);
-
-//Not Found
-// app.use(notFound);
-
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });
-
 
 // Server Routes
 app.use('/api/v1', router);

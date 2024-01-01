@@ -7,7 +7,7 @@ const methods = ['GET', 'POST', 'PATCH', 'DELETE']; // List of allowed HTTP meth
 
 /**
  * CORS Middleware
- * 
+ *
  * This middleware enforces Cross-Origin Resource Sharing (CORS) policies to control
  * which domains can access your server and which HTTP methods are allowed.
  */
