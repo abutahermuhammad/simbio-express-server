@@ -4,6 +4,7 @@ import { initializeServer } from './services/server.service';
 // import { debug } from './src/utils/debug.util';
 // import debug from ('debug')('app:startup');
 import { initializeMiddlewares } from './middlewares';
+import notFoundMiddleware from './middlewares/notFound.middleware';
 import router from './routes';
 
 
@@ -36,6 +37,9 @@ app.get('/', (req, res) => {
 
 // Server Routes
 app.use('/api/v1', router);
+
+// Not Found
+app.use(notFoundMiddleware);
 
 
 /**
