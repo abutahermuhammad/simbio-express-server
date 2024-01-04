@@ -1,39 +1,52 @@
-import express from 'express';
+import express from "express";
+import {
+    createCollectionCenterController,
+    deleteCollectionCenterController,
+    getCollectionCenterController,
+    getCollectionCentersController,
+    updateCollectionCenterController,
+} from "./collectionCenter.controller";
 
 const router = express.Router();
 
-/**
- * API Endpoints:
- *  - Create
- *  - Update
- *  - Get
- *  - Delete
- *  - Get All
- */
+// Create a new member
+router.post(
+    "/",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    createCollectionCenterController,
+);
 
-router.get('/', (req, res) => {
-    res.status(200).json({ message: 'Collection centers route' });
-})
+// Get all members
+router.get(
+    "/",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    getCollectionCentersController,
+);
 
-// router.post(
-//     '/create-student',
-//     auth(USER_ROLE.admin),
-//     validateRequest(createStudentValidationSchema),
-//     UserControllers.createStudent,
-// );
+// Update a member
+router.put(
+    "/:memberId",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    updateCollectionCenterController,
+);
 
-// router.post(
-//     '/create-faculty',
-//     auth(USER_ROLE.admin),
-//     validateRequest(createFacultyValidationSchema),
-//     UserControllers.createFaculty,
-// );
+// Get a member
+router.get(
+    "/:memberId",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    getCollectionCenterController,
+);
 
-// router.post(
-//     '/create-admin',
-//     // auth(USER_ROLE.admin),
-//     validateRequest(createAdminValidationSchema),
-//     UserControllers.createAdmin,
-// );
+// Delete a member
+router.delete(
+    "/:memberId",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    deleteCollectionCenterController,
+);
 
 export const collectionRoutes = router;
