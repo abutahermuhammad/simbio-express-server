@@ -1,20 +1,20 @@
-import { Router } from 'express';
-import { authRoutes } from '../modules/auth/auth.route';
-import { bloodRequestRoutes } from '../modules/bloodRequest/bloodRequest.route';
-import { clubRoutes } from '../modules/club/club.route';
-import { collectionRoutes } from '../modules/collectionCenter/collectionCenter.route';
-import { contactRoutes } from '../modules/contact/contact.route';
-import { docRoutes } from '../modules/doc/doc.route';
-import { donationRoutes } from '../modules/donation/donation.route';
-import { eventRoutes } from '../modules/event/event.route';
-import { logRoutes } from '../modules/log/log.route';
-import { memberRoutes } from '../modules/member/member.route';
-import { notificationRoutes } from '../modules/notification/notification.route';
-import { searchRoutes } from '../modules/search/search.route';
-import { settingsRoutes } from '../modules/settings/settings.route';
-import { supportRoutes } from '../modules/support/support.route';
-import { teamRoutes } from '../modules/team/team.route';
-import { userRoutes } from '../modules/user/user.route';
+import { Router } from "express";
+import { authRoutes } from "../modules/auth/auth.route";
+import { bloodRequestRoutes } from "../modules/bloodRequest/bloodRequest.route";
+import { clubRoutes } from "../modules/club/club.route";
+import { collectionRoutes } from "../modules/collectionCenter/collectionCenter.route";
+import { contactRoutes } from "../modules/contact/contact.route";
+import { docRoutes } from "../modules/doc/doc.route";
+import { donationRoutes } from "../modules/donation/donation.route";
+import { eventRoutes } from "../modules/event/event.route";
+import { logRoutes } from "../modules/log/log.route";
+import { memberRoutes } from "../modules/member/member.route";
+import { notificationRoutes } from "../modules/notification/notification.route";
+import { searchRoutes } from "../modules/search/search.route";
+import { settingsRoutes } from "../modules/settings/settings.route";
+import { supportRoutes } from "../modules/support/support.route";
+import { teamRoutes } from "../modules/team/team.route";
+import { userRoutes } from "../modules/user/user.route";
 
 const router = Router();
 
@@ -40,66 +40,66 @@ const moduleRoutes = [
      */
     {
         path: "/auth",
-        route: authRoutes
+        route: authRoutes,
     },
     {
-        path: "/blood-request",
-        route: bloodRequestRoutes
+        path: "/blood-requests",
+        route: bloodRequestRoutes,
     },
     {
-        path: "/club",
-        route: clubRoutes
+        path: "/clubs",
+        route: clubRoutes,
     },
     {
         path: "/collection-centers",
-        route: collectionRoutes
+        route: collectionRoutes,
     },
     {
         path: "/contacts",
-        route: contactRoutes
+        route: contactRoutes,
     },
     {
         path: "/doc",
-        route: docRoutes
+        route: docRoutes,
     },
     {
         path: "/donations",
-        route: donationRoutes
+        route: donationRoutes,
     },
     {
         path: "/events",
-        route: eventRoutes
+        route: eventRoutes,
     },
     {
         path: "/logs",
-        route: logRoutes
+        route: logRoutes,
     },
     {
         path: "/members",
-        route: memberRoutes
+        route: memberRoutes,
     },
     {
         path: "/notifications",
-        route: notificationRoutes
+        route: notificationRoutes,
     },
     {
         path: "/search",
-        route: searchRoutes
+        route: searchRoutes,
     },
     {
         path: "/settings",
-        route: settingsRoutes
+        route: settingsRoutes,
     },
     {
         path: "/supports",
-        route: supportRoutes
+        route: supportRoutes,
     },
     {
         path: "/teams",
-        route: teamRoutes
+        route: teamRoutes,
     },
     {
-        path: '/users',
+        path: "/users",
         route: userRoutes,
     },
 ];

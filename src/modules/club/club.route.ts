@@ -1,39 +1,52 @@
-import express from 'express';
+import express from "express";
+import {
+    createClubController,
+    deleteClubController,
+    getClubController,
+    getClubsController,
+    updateClubController,
+} from "./club.controller";
 
 const router = express.Router();
 
-/**
- * API Endpoints:
- *  - Create
- *  - Update
- *  - Get
- *  - Delete
- *  - Get All
- */
+// Create a new Club
+router.post(
+    "/",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    createClubController,
+);
 
-router.get('/', (req, res) => {
-    res.status(200).json({ message: 'Club route' });
-})
+// Get all Clubs
+router.get(
+    "/",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    getClubsController,
+);
 
-// router.post(
-//     '/create-student',
-//     auth(USER_ROLE.admin),
-//     validateRequest(createStudentValidationSchema),
-//     UserControllers.createStudent,
-// );
+// Update a Club
+router.put(
+    "/:clubId",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    updateClubController,
+);
 
-// router.post(
-//     '/create-faculty',
-//     auth(USER_ROLE.admin),
-//     validateRequest(createFacultyValidationSchema),
-//     UserControllers.createFaculty,
-// );
+// Get a Club
+router.get(
+    "/:clubId",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    getClubController,
+);
 
-// router.post(
-//     '/create-admin',
-//     // auth(USER_ROLE.admin),
-//     validateRequest(createAdminValidationSchema),
-//     UserControllers.createAdmin,
-// );
+// Delete a Club
+router.delete(
+    "/:clubId",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    deleteClubController,
+);
 
 export const clubRoutes = router;
