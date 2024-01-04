@@ -1,39 +1,52 @@
-import express from 'express';
+import express from "express";
+import {
+    createBloodRequestController,
+    deleteBloodRequestController,
+    getBloodRequestController,
+    getBloodRequestsController,
+    updateBloodRequestController,
+} from "./bloodRequest.controller";
 
 const router = express.Router();
 
-/**
- * API Endpoints:
- *  - Create
- *  - Update
- *  - Get
- *  - Delete
- *  - Get All
- */
+// Create a new member
+router.post(
+    "/",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    createBloodRequestController,
+);
 
-router.get('/', (req, res) => {
-    res.status(200).json({ message: 'bloodRequest route' });
-})
+// Get all members
+router.get(
+    "/",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    getBloodRequestsController,
+);
 
-// router.post(
-//     '/create-student',
-//     auth(USER_ROLE.admin),
-//     validateRequest(createStudentValidationSchema),
-//     UserControllers.createStudent,
-// );
+// Update a member
+router.put(
+    "/:requestId",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    updateBloodRequestController,
+);
 
-// router.post(
-//     '/create-faculty',
-//     auth(USER_ROLE.admin),
-//     validateRequest(createFacultyValidationSchema),
-//     UserControllers.createFaculty,
-// );
+// Get a member
+router.get(
+    "/:requestId",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    getBloodRequestController,
+);
 
-// router.post(
-//     '/create-admin',
-//     // auth(USER_ROLE.admin),
-//     validateRequest(createAdminValidationSchema),
-//     UserControllers.createAdmin,
-// );
+// Delete a member
+router.delete(
+    "/:requestId",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    deleteBloodRequestController,
+);
 
 export const bloodRequestRoutes = router;
