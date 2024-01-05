@@ -1,39 +1,53 @@
-import express from 'express';
+import express from "express";
+import {
+    createDonationController,
+    deleteDonationController,
+    getDonationController,
+    getDonationsController,
+    updateDonationController
+} from "./donation.controller";
 
 const router = express.Router();
 
-/**
- * API Endpoints:
- *  - Create
- *  - Update
- *  - Get
- *  - Delete
- *  - Get All
- */
+// Create a new Donation
+router.post(
+    "/",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    createDonationController,
+);
 
-router.get('/', (req, res) => {
-    res.status(200).json({ message: 'Donation route' });
-})
+// Get all Donation
+router.get(
+    "/",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    getDonationsController,
+);
 
-// router.post(
-//     '/create-student',
-//     auth(USER_ROLE.admin),
-//     validateRequest(createStudentValidationSchema),
-//     UserControllers.createStudent,
-// );
+// Update a Donation
+router.put(
+    "/:clubId",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    updateDonationController,
+);
 
-// router.post(
-//     '/create-faculty',
-//     auth(USER_ROLE.admin),
-//     validateRequest(createFacultyValidationSchema),
-//     UserControllers.createFaculty,
-// );
+// Get a Donation
+router.get(
+    "/:clubId",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    getDonationController,
+);
 
-// router.post(
-//     '/create-admin',
-//     // auth(USER_ROLE.admin),
-//     validateRequest(createAdminValidationSchema),
-//     UserControllers.createAdmin,
-// );
+// Delete a Donation
+router.delete(
+    "/:clubId",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    deleteDonationController,
+);
+
 
 export const donationRoutes = router;

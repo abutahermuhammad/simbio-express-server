@@ -1,39 +1,52 @@
-import express from 'express';
+import express from "express";
+import {
+    createEventController,
+    deleteEventController,
+    getEventController,
+    getEventsController,
+    updateEventController
+} from "./event.controller";
 
 const router = express.Router();
 
-/**
- * API Endpoints:
- *  - Create
- *  - Update
- *  - Get
- *  - Delete
- *  - Get All
- */
+// Create a new Event
+router.post(
+    "/",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    createEventController,
+);
 
-router.get('/', (req, res) => {
-    res.status(200).json({ message: 'Event route' });
-})
+// Get all Event
+router.get(
+    "/",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    getEventsController,
+);
 
-// router.post(
-//     '/create-student',
-//     auth(USER_ROLE.admin),
-//     validateRequest(createStudentValidationSchema),
-//     UserControllers.createStudent,
-// );
+// Update a Event
+router.put(
+    "/:clubId",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    updateEventController,
+);
 
-// router.post(
-//     '/create-faculty',
-//     auth(USER_ROLE.admin),
-//     validateRequest(createFacultyValidationSchema),
-//     UserControllers.createFaculty,
-// );
+// Get a Event
+router.get(
+    "/:clubId",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    getEventController,
+);
 
-// router.post(
-//     '/create-admin',
-//     // auth(USER_ROLE.admin),
-//     validateRequest(createAdminValidationSchema),
-//     UserControllers.createAdmin,
-// );
+// Delete a Event
+router.delete(
+    "/:clubId",
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    deleteEventController,
+);
 
 export const eventRoutes = router;
