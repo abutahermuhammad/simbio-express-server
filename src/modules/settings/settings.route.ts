@@ -1,39 +1,39 @@
 import express from 'express';
+import { getProfileSettingsController, getSettingsController, updateProfileSettingsController, updateSettingsController } from './settings.controller';
 
 const router = express.Router();
 
-/**
- * API Endpoints:
- *  - Create
- *  - Update
- *  - Get
- *  - Delete
- *  - Get All
- */
 
-router.get('/', (req, res) => {
-    res.status(200).json({ message: 'Settings route' });
-})
+// Get all members
+router.get(
+    '/',
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    getSettingsController
+);
 
-// router.post(
-//     '/create-student',
-//     auth(USER_ROLE.admin),
-//     validateRequest(createStudentValidationSchema),
-//     UserControllers.createStudent,
-// );
+// Update a member
+router.put(
+    '/',
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    updateSettingsController
+);
 
-// router.post(
-//     '/create-faculty',
-//     auth(USER_ROLE.admin),
-//     validateRequest(createFacultyValidationSchema),
-//     UserControllers.createFaculty,
-// );
+// Get all members
+router.get(
+    '/profile',
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    getProfileSettingsController
+);
 
-// router.post(
-//     '/create-admin',
-//     // auth(USER_ROLE.admin),
-//     validateRequest(createAdminValidationSchema),
-//     UserControllers.createAdmin,
-// );
+// Update a member
+router.put(
+    '/profile',
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    updateProfileSettingsController
+);
 
 export const settingsRoutes = router;

@@ -1,39 +1,46 @@
 import express from 'express';
+import { createUserController, deleteUserController, getUserController, getUsersController, updateUserController } from './user.controller';
 
 const router = express.Router();
 
-/**
- * API Endpoints:
- *  - Create
- *  - Update
- *  - Get
- *  - Delete
- *  - Get All
- */
+// Create a new user
+router.post(
+    '/',
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    createUserController
+);
 
-router.get('/', (req, res) => {
-    res.status(200).json({ message: 'User route' });
-})
+// Get all users
+router.get(
+    '/',
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    getUsersController
+);
 
-// router.post(
-//     '/create-student',
-//     auth(USER_ROLE.admin),
-//     validateRequest(createStudentValidationSchema),
-//     UserControllers.createStudent,
-// );
+// Update a user
+router.put(
+    '/:userId',
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    updateUserController
+);
 
-// router.post(
-//     '/create-faculty',
-//     auth(USER_ROLE.admin),
-//     validateRequest(createFacultyValidationSchema),
-//     UserControllers.createFaculty,
-// );
+// Get a user
+router.get(
+    '/:userId',
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    getUserController
+);
 
-// router.post(
-//     '/create-admin',
-//     // auth(USER_ROLE.admin),
-//     validateRequest(createAdminValidationSchema),
-//     UserControllers.createAdmin,
-// );
+// Delete a user
+router.delete(
+    '/:userId',
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    deleteUserController
+);
 
 export const userRoutes = router;

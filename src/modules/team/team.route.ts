@@ -1,39 +1,56 @@
 import express from 'express';
+import { createTeamController, deleteTeamController, getTeamController, getTeamsController, updateTeamController } from './team.controller';
 
 const router = express.Router();
 
 /**
- * API Endpoints:
- *  - Create
- *  - Update
- *  - Get
- *  - Delete
- *  - Get All
+ * Route: /teams
+ *  - Create a new team
+ *  - Get all teams
+ *  - Update a team
+ *  - Get a team
+ *  - Delete a team
+ *  - Get team members
  */
 
-router.get('/', (req, res) => {
-    res.status(200).json({ message: 'Team route' });
-})
+// Create a new team
+router.post(
+    '/',
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    createTeamController
+);
 
-// router.post(
-//     '/create-student',
-//     auth(USER_ROLE.admin),
-//     validateRequest(createStudentValidationSchema),
-//     UserControllers.createStudent,
-// );
+// Get all teams
+router.get(
+    '/',
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    getTeamsController
+);
 
-// router.post(
-//     '/create-faculty',
-//     auth(USER_ROLE.admin),
-//     validateRequest(createFacultyValidationSchema),
-//     UserControllers.createFaculty,
-// );
+// Update a team
+router.put(
+    '/:teamId',
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    updateTeamController
+);
 
-// router.post(
-//     '/create-admin',
-//     // auth(USER_ROLE.admin),
-//     validateRequest(createAdminValidationSchema),
-//     UserControllers.createAdmin,
-// );
+// Get a team
+router.get(
+    '/:teamId',
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    getTeamController
+);
+
+// Delete a team
+router.delete(
+    '/:teamId',
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    deleteTeamController
+);
 
 export const teamRoutes = router;
