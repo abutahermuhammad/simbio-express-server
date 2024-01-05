@@ -1,39 +1,23 @@
 import express from 'express';
+import { getSearchController, getSearchHistoryController } from './search.controller';
 
 const router = express.Router();
 
-/**
- * API Endpoints:
- *  - Create
- *  - Update
- *  - Get
- *  - Delete
- *  - Get All
- */
+// Make search
+router.get(
+    '/',
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    getSearchController
+);
 
-router.get('/', (req, res) => {
-    res.status(200).json({ message: 'Search route' });
-})
+// Get search history
+router.get(
+    '/history',
+    //     auth(USER_ROLE.admin),
+    //     validateRequest(createStudentValidationSchema),
+    getSearchHistoryController
+);
 
-// router.post(
-//     '/create-student',
-//     auth(USER_ROLE.admin),
-//     validateRequest(createStudentValidationSchema),
-//     UserControllers.createStudent,
-// );
-
-// router.post(
-//     '/create-faculty',
-//     auth(USER_ROLE.admin),
-//     validateRequest(createFacultyValidationSchema),
-//     UserControllers.createFaculty,
-// );
-
-// router.post(
-//     '/create-admin',
-//     // auth(USER_ROLE.admin),
-//     validateRequest(createAdminValidationSchema),
-//     UserControllers.createAdmin,
-// );
 
 export const searchRoutes = router;
