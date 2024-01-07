@@ -14,12 +14,11 @@ import router from './routes';
 // file deepcode ignore DisablePoweredBy: <Already added `helmet` module in the middleware script>
 // deepcode ignore UseCsurfForExpress: <please specify a reason of ignoring this>
 const app: Express = express();
-app.set('host', config.get("server.ip"));
+
+app.set('host', config.get("server.host"));
 app.set('port', config.get('server.port'));
 app.set('trust proxy', 1) // trust first proxy
 app.disable('x-powered-by');
-// Disable the trust proxy setting for security reasons
-app.disable('trust proxy')
 
 // Initialize middlewares for the Express app
 initializeMiddlewares(app);
