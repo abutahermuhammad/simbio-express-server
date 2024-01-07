@@ -7,6 +7,7 @@ import { Express } from "express";
 // Import the NUM_WORKERS and PORT constants from the server configuration file
 // These constants define how many worker processes we want to create and what port they will listen on
 import config from 'config';
+import { Server } from "http";
 import { debugServer } from "../utils/debug.util";
 
 /**
@@ -17,6 +18,8 @@ import { debugServer } from "../utils/debug.util";
  * @since 1.0.0
  */
 const initializeServer = (app: Express) => {
+    let server: Server;
+
     // Check if this is the primary (master) process.
     // The primary process is responsible for creating and managing the worker processes .
     if (cluster.isPrimary) {
@@ -42,6 +45,29 @@ const initializeServer = (app: Express) => {
             }
         });
 
+        // Handle unhandled rejections.
+        process.on('unhandledRejection', (reason, promise) => {
+            // Log the reason for the unhandled rejection.
+            console.error('Unhandled Rejection:', reason);
+
+            // Optionally, you can also log the promise that was rejected.
+            console.error('Promise:', promise);
+
+            if (server) {
+                server.close(() => {
+                    process.exit(1);
+                });
+            }
+
+            process.exit(1);
+        });
+
+        process.on('uncaughtException', () => {
+            console.log(`😈 uncaughtException is detected , shutting down ...`);
+            process.exit(1);
+        });
+
+
         // Listen for worker processes that exit unexpectedly and fork new ones.
         // This event is emitted when a worker process dies or disconnects from the primary process.
         cluster.on('exit', (worker, code, signal) => {
@@ -58,7 +84,7 @@ const initializeServer = (app: Express) => {
     } else {
         // Each worker process runs the Express app and listens on the specified PORT.
         // This creates a web server that can handle HTTP requests and responses using the app object.
-        app.listen(config.get<number>("server.port"), () => {
+        server = app.listen(config.get<number>("server.port"), () => {
             console.log("Server listening on port " + config.get<number>("server.port"));
             // Log a message to indicate that a worker process started and show its process ID and port number.
             debugServer(`Worker process ${process.pid} started. Listening on port ${config.get<number>("server.port")}`);
