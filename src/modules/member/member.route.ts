@@ -1,13 +1,22 @@
 import express from 'express';
+import validateRequest from './../../middlewares/validationRequest.middleware';
 import { createMemberController, deleteMemberController, getMemberController, getMembersController, updateMemberController } from './member.controller';
+import { CreateMemberRequestSchema } from './member.model';
 
 const router = express.Router();
+
+/**
+ * TODO:
+ * - Solve type errors.
+ */
 
 // Create a new member
 router.post(
     '/',
     //     auth(USER_ROLE.admin),
-    //     validateRequest(createStudentValidationSchema),
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    validateRequest(CreateMemberRequestSchema),
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     createMemberController
 );
 
@@ -16,6 +25,7 @@ router.get(
     '/',
     //     auth(USER_ROLE.admin),
     //     validateRequest(createStudentValidationSchema),
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     getMembersController
 );
 
@@ -24,6 +34,7 @@ router.put(
     '/:memberId',
     //     auth(USER_ROLE.admin),
     //     validateRequest(createStudentValidationSchema),
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     updateMemberController
 );
 
@@ -32,6 +43,7 @@ router.get(
     '/:memberId',
     //     auth(USER_ROLE.admin),
     //     validateRequest(createStudentValidationSchema),
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     getMemberController
 );
 
@@ -40,6 +52,7 @@ router.delete(
     '/:memberId',
     //     auth(USER_ROLE.admin),
     //     validateRequest(createStudentValidationSchema),
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     deleteMemberController
 );
 
