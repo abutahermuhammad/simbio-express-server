@@ -1,18 +1,42 @@
-import { ErrorRequestHandler } from 'express';
+import { ErrorRequestHandler, NextFunction, Request, Response } from 'express';
 import { TErrorSources } from '../types/error';
 import { AppError } from '../utils/appError';
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const globalErrorHandler: ErrorRequestHandler = (error: AppError, req, res, next) => {
-  // let responseObj = {};
-  let statusCode = error.statusCode || 500;
-  let message = error.message || 'Something went wrong!';
+/**
+ * Global error handler middleware.
+ * @param error - The error object.
+ * @param req - The request object.
+ * @param res - The response object.
+ * @param next - The next middleware function.
+ */
+const globalErrorHandler: ErrorRequestHandler = (
+  error: AppError,
+  req: Request,
+  res: Response,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  next: NextFunction
+): void => {
+  console.log("GLOBAL ERROR HANDLER")
+  let statusCode: number = error.statusCode || 500;
+  let message: string = error.message || 'Something went wrong!';
   let errorSources: TErrorSources = [
     {
       path: '',
       message: error.message || 'Something went wrong',
     },
   ];
+
+
+  if (error instanceof AppError) {
+    statusCode = error.statusCode;
+    message = error.message;
+    errorSources = [
+      {
+        path: '',
+        message: error?.message,
+      },
+    ];
+  }
 
   /**
    * Error logger.
@@ -51,26 +75,11 @@ const globalErrorHandler: ErrorRequestHandler = (error: AppError, req, res, next
   //     message = simplifiedError?.message;
   //     errorSources = simplifiedError?.errorSources;
 
-  // } else if (err instanceof AppError) {
-  if (error instanceof AppError) {
-    statusCode = error?.statusCode;
-    message = error.message;
-    errorSources = [
-      {
-        path: '',
-        message: error?.message,
-      },
-    ];
-
-  }
-
   res.status(statusCode).json({
     success: false,
-    ...error,
     message: message,
-    errorSources,
-    // stack: config.get<string>('server.env') === 'development' ? error?.stack : null,
-    // stack: error?.stack,
+    data: null,
+    error: errorSources,
   });
 };
 

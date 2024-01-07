@@ -7,15 +7,15 @@ export const RequestQuerySchema = z.object({
     context: z.enum(["web", "tauri"], {
         required_error: "Context is required"
     }),
-    search: z.string().optional(),
-    filter: z.string().optional(),
-    q: z.string().optional(),
-    limit: z.string().optional(),
-    offset: z.string().optional(),
-    sortby: z.string().optional(),
-    order: z.string().optional(),
-    exclude: z.string().optional(),
-    include: z.string().optional()
+    search: z.string().nullish(),
+    filter: z.string().nullish(),
+    q: z.string().nullish(),
+    limit: z.string().nullish(),
+    offset: z.string().nullish(),
+    sortby: z.string().nullish(),
+    order: z.string().nullish(),
+    exclude: z.string().nullish(),
+    include: z.string().nullish()
 });
 
 export type RequestQuerySchemaType = z.infer<typeof RequestQuerySchema>;
