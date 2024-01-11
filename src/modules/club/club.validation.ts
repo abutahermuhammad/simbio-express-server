@@ -1,39 +1,45 @@
 import { z } from "zod";
-import { HttpRequestParamsSchema, HttpRequestQuerySchema, RequestBodySchema } from "./../../models/request.model";
+import { HttpRequestParamsSchema, HttpRequestQuerySchema, RequestBodySchema } from "../../models/request.model";
 
+export const SocialMediaSchema = z.object({
+    facebook: z.string().max(255).optional(),
+    instagram: z.string().max(255).optional(),
+    x: z.string().max(255).optional(),
+    linkedin: z.string().max(255).optional(),
+})
+export type TSocialMedia = z.infer<typeof SocialMediaSchema>;
 
-/**
- * Route: POST /blood-requests
- */
-export const BloodRequestSchema = z.object({
-    id: z.string() || z.number(),
-    health_issue: z.string(),
-    blood_group: z.string(),
-    quantity: z.number(),
-    donation_type: z.string(),
-    datetime: z.string(),
-    hospital_name: z.string(),
-    hospital_address: z.string(),
-    hospital_phone: z.string(),
-    hospital_email: z.string(),
-    version: z.string(),
-    memberId: z.number(),
-    personId: z.number()
+// Define the Club schema
+export const ClubSchema = z.object({
+    id: z.number().optional(),
+    created_at: z.string().optional(), // Adjust this based on the actual data type
+    updated_at: z.string().optional(), // Adjust this based on the actual data type
+    name: z.string(),
+    established_at: z.string(), // Adjust this based on the actual data type
+    contact: z.number(),
+    version: z.string().optional(),
+    chairman: z.number(),
+    founder: z.number(),
+    vice_chairman: z.number(),
+
 });
-export type TBloodRequestSchema = z.infer<typeof BloodRequestSchema>;
+
+// Export the types for easier use
+export type TClub = z.infer<typeof ClubSchema>;
+
 
 /**
  * Route: POST /blood-requests
  */
-export const PostBloodRequestRequestValidatorSchema = z.object({
-    body: RequestBodySchema.extend(BloodRequestSchema.shape)
+export const PostClubRequestValidatorSchema = z.object({
+    body: RequestBodySchema.extend(ClubSchema.shape)
 });
 
 
 /**
  * Route: GET /blood-requests
  */
-export const GetBloodRequestsRequestValidatorSchema = z.object({
+export const GetClubsRequestValidatorSchema = z.object({
     // Define your schemas for query, params, body, and cookies here
     query: HttpRequestQuerySchema.extend({
         search: z.string().nullish(),
@@ -52,34 +58,34 @@ export const GetBloodRequestsRequestValidatorSchema = z.object({
 
 
 /**
- * Route: GET /blood-requests/{requestId}
+ * Route: GET /blood-requests/{clubId}
  */
-export const GetBloodRequestRequestValidatorSchema = z.object({
+export const GetClubRequestValidatorSchema = z.object({
     query: HttpRequestQuerySchema,
     params: HttpRequestParamsSchema.extend({
-        requestId: z.string().min(1).max(8)
+        clubId: z.string().min(1).max(8)
     })
 });
 
 
 /**
- * Route: PUT /blood-requests/{requestId}
+ * Route: PUT /blood-requests/{clubId}
  */
-export const PutBloodRequestRequestValidatorSchema = z.object({
+export const PutClubRequestValidatorSchema = z.object({
     query: HttpRequestQuerySchema,
     params: HttpRequestParamsSchema.extend({
-        requestId: z.string().min(1).max(8)
+        clubId: z.string().min(1).max(8)
     }),
-    body: BloodRequestSchema.partial()
+    body: ClubSchema.partial()
 })
 
 
 /**
- * Route: DELETE /blood-requests/{requestId}
+ * Route: DELETE /blood-requests/{clubId}
  */
-export const DeleteBloodRequestRequestValidatorSchema = z.object({
+export const DeleteClubRequestValidatorSchema = z.object({
     query: HttpRequestQuerySchema,
     params: HttpRequestParamsSchema.extend({
-        requestId: z.string().min(1).max(8)
+        clubId: z.string().min(1).max(8)
     })
 });

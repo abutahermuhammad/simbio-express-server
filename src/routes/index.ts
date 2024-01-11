@@ -1,7 +1,7 @@
 import { Router } from "express";
 // import { authRoutes } from "../modules/auth/auth.route";
 import { bloodRequestRoutes } from "../modules/bloodRequest/bloodRequest.route";
-// import { clubRoutes } from "../modules/club/club.route";
+import { clubRoutes } from "../modules/club/club.route";
 // import { collectionRoutes } from "../modules/collectionCenter/collectionCenter.route";
 import { contactRoutes } from "../modules/contact/contact.route";
 // import { docRoutes } from "../modules/doc/doc.route";
@@ -54,10 +54,10 @@ const moduleRoutes = [
         path: "/blood-requests",
         route: bloodRequestRoutes,
     },
-    // {
-    //     path: "/clubs",
-    //     route: clubRoutes,
-    // },
+    {
+        path: "/clubs",
+        route: clubRoutes,
+    },
     // {
     //     path: "/collection-centers",
     //     route: collectionRoutes,
