@@ -1,11 +1,13 @@
 import express from "express";
+import validateRequest from "./../../middlewares/validationRequest.middleware";
 import {
     createBloodRequestController,
     deleteBloodRequestController,
     getBloodRequestController,
     getBloodRequestsController,
-    updateBloodRequestController,
+    updateBloodRequestController
 } from "./bloodRequest.controller";
+import { DeleteBloodRequestRequestValidatorSchema, GetBloodRequestRequestValidatorSchema, GetBloodRequestsRequestValidatorSchema, PostBloodRequestRequestValidatorSchema, PutBloodRequestRequestValidatorSchema } from "./bloodRequest.validation";
 
 const router = express.Router();
 
@@ -13,7 +15,9 @@ const router = express.Router();
 router.post(
     "/",
     //     auth(USER_ROLE.admin),
-    //     validateRequest(createStudentValidationSchema),
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    validateRequest(PostBloodRequestRequestValidatorSchema),
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     createBloodRequestController,
 );
 
@@ -21,31 +25,39 @@ router.post(
 router.get(
     "/",
     //     auth(USER_ROLE.admin),
-    //     validateRequest(createStudentValidationSchema),
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    validateRequest(GetBloodRequestsRequestValidatorSchema),
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     getBloodRequestsController,
-);
-
-// Update a member
-router.put(
-    "/:requestId",
-    //     auth(USER_ROLE.admin),
-    //     validateRequest(createStudentValidationSchema),
-    updateBloodRequestController,
 );
 
 // Get a member
 router.get(
     "/:requestId",
     //     auth(USER_ROLE.admin),
-    //     validateRequest(createStudentValidationSchema),
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    validateRequest(GetBloodRequestRequestValidatorSchema),
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     getBloodRequestController,
+);
+
+// Update a member
+router.put(
+    "/:requestId",
+    //     auth(USER_ROLE.admin),
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    validateRequest(PutBloodRequestRequestValidatorSchema),
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    updateBloodRequestController,
 );
 
 // Delete a member
 router.delete(
     "/:requestId",
     //     auth(USER_ROLE.admin),
-    //     validateRequest(createStudentValidationSchema),
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    validateRequest(DeleteBloodRequestRequestValidatorSchema),
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     deleteBloodRequestController,
 );
 

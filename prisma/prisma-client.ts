@@ -1,19 +1,22 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 
-declare global {
-    // @ts-ignore
-    var prisma: PrismaClient // This must be a `var` and not a `let / const`
-}
+class PrismaSingleton {
+    private static instance: PrismaClient;
 
-let prisma: PrismaClient
-
-if (process.env.NODE_ENV === 'production') {
-    prisma = new PrismaClient()
-} else {
-    if (!global.prisma) {
-        global.prisma = new PrismaClient()
+    private constructor() {
+        // Initialize the PrismaClient instance
+        // this.instance = new PrismaClient()
+        PrismaSingleton.instance = new PrismaClient()
     }
-    prisma = global.prisma
+
+    public static getInstance(): PrismaClient {
+        if (!PrismaSingleton.instance) {
+            PrismaSingleton.instance = new PrismaClient();
+            // PrismaSingleton.instance = new PrismaSingleton()
+        }
+
+        return PrismaSingleton.instance;
+    }
 }
 
-export default prisma
+export default PrismaSingleton.getInstance()

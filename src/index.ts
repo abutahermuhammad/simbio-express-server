@@ -1,11 +1,11 @@
 import config from 'config';
 import express, { Express } from 'express';
-import { initializeServer } from './services/server.service';
 // import { debug } from './src/utils/debug.util';
 // import debug from ('debug')('app:startup');
 import { initializeMiddlewares } from './middlewares';
 import notFoundMiddleware from './middlewares/notFound.middleware';
 import router from './routes';
+import { initializeServer } from './services/server.service';
 
 
 // debug("Application started")

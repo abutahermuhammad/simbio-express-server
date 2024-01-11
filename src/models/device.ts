@@ -1,6 +1,5 @@
 import * as z from "zod"
-import * as imports from "../prisma/null"
-import { CompleteVersion, RelatedVersionSchema, CompleteLoginRecord, RelatedLoginRecordSchema } from "./index"
+// import { CompleteLoginRecord, CompleteVersion, RelatedLoginRecordSchema, RelatedVersionSchema } from "./index"
 
 export const DeviceSchema = z.object({
   id: z.number().int(),
@@ -17,17 +16,17 @@ export const DeviceSchema = z.object({
   version: z.string(),
 })
 
-export interface CompleteDevice extends z.infer<typeof DeviceSchema> {
-  Version: CompleteVersion
-  LoginRecord: CompleteLoginRecord[]
-}
+// export interface CompleteDevice extends z.infer<typeof DeviceSchema> {
+//   Version: CompleteVersion
+//   LoginRecord: CompleteLoginRecord[]
+// }
 
 /**
  * RelatedDeviceSchema contains all relations on your model in addition to the scalars
  *
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
-export const RelatedDeviceSchema: z.ZodSchema<CompleteDevice> = z.lazy(() => DeviceSchema.extend({
-  Version: RelatedVersionSchema,
-  LoginRecord: RelatedLoginRecordSchema.array(),
-}))
+// export const RelatedDeviceSchema: z.ZodSchema<CompleteDevice> = z.lazy(() => DeviceSchema.extend({
+//   Version: RelatedVersionSchema,
+//   LoginRecord: RelatedLoginRecordSchema.array(),
+// }))

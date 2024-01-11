@@ -39,7 +39,7 @@
       "@middlewares/*": ["src/middlewares/*"],
       "@models/*": ["src/models/*"],
       "@modules/*": ["src/modules/*"],
-      "@services/*": ["src/services/*"],
+      "@services/*": ["services/*"],
       "@utils/*": ["utils/*"]
     }, /* Specify a set of entries that re-map imports to additional lookup locations. */
     // "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */

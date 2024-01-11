@@ -1,6 +1,5 @@
 import * as z from "zod"
-import * as imports from "../prisma/null"
-import { CompleteVersion, RelatedVersionSchema, CompleteUser, RelatedUserSchema } from "./index"
+// import { CompleteUser, CompleteVersion, RelatedUserSchema, RelatedVersionSchema } from "./index"
 
 export const SocialMediaLinksSchema = z.object({
   id: z.number().int(),
@@ -13,17 +12,17 @@ export const SocialMediaLinksSchema = z.object({
   version: z.string(),
 })
 
-export interface CompleteSocialMediaLinks extends z.infer<typeof SocialMediaLinksSchema> {
-  Version: CompleteVersion
-  User: CompleteUser[]
-}
+// export interface CompleteSocialMediaLinks extends z.infer<typeof SocialMediaLinksSchema> {
+//   Version: CompleteVersion
+//   User: CompleteUser[]
+// }
 
 /**
  * RelatedSocialMediaLinksSchema contains all relations on your model in addition to the scalars
  *
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
-export const RelatedSocialMediaLinksSchema: z.ZodSchema<CompleteSocialMediaLinks> = z.lazy(() => SocialMediaLinksSchema.extend({
-  Version: RelatedVersionSchema,
-  User: RelatedUserSchema.array(),
-}))
+// export const RelatedSocialMediaLinksSchema: z.ZodSchema<CompleteSocialMediaLinks> = z.lazy(() => SocialMediaLinksSchema.extend({
+//   Version: RelatedVersionSchema,
+//   User: RelatedUserSchema.array(),
+// }))

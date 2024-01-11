@@ -2,18 +2,35 @@
 //// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 //// ------------------------------------------------------
 
+Table Account {
+  userId String
+  type String
+  provider String [unique]
+  providerAccountId String [unique]
+  refresh_token String
+  access_token String
+  expires_at BigInt
+  scope String
+  id_token String [pk]
+  session_state String
+}
+
 Table Ambulance {
   id Int [pk, increment]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
   vehicle_number String [not null]
   ambulance_type String
-  person_id Int [not null]
+  person Int [not null]
   version String [not null, default: 'v1']
   organization Int
+  equipment String[] [not null]
+  contact Int
+  color String
+  Contact Contact
   Organization Organization
   Person Person [not null]
-  Version_Ambulance_versionToVersion Version [not null]
+  Version Version [not null]
 }
 
 Table BloodCenter {
@@ -22,14 +39,39 @@ Table BloodCenter {
   updated_at DateTime [not null]
   established_at DateTime [not null]
   version String [not null, default: 'v1']
-  founder Int
+  founder Int [not null]
   contact Int
-  location Int
+  title String [not null]
   Contact_BloodCenter_contactToContact Contact
-  Person Person
-  Location Location
+  Person Person [not null]
   Version Version [not null]
+  BloodDonation BloodDonation [not null]
   Contact_Contact_blood_centerToBloodCenter Contact [not null]
+}
+
+Table BloodDonation {
+  id Int [pk, increment]
+  donor_id Int [not null]
+  organization_id Int [not null]
+  amount Int [not null]
+  version String [not null]
+  donated_at DateTime [default: `now()`, not null]
+  referred_by String
+  test_done Json
+  bags String[] [not null]
+  media_done String
+  media_used String
+  incubation String
+  note String
+  created_at DateTime [default: `now()`]
+  updated_at DateTime
+  cabin_no String
+  reg_no String
+  BloodCenter BloodCenter [not null]
+  Person Person [not null]
+  Version Version [not null]
+
+  Note: 'This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments'
 }
 
 Table Club {
@@ -49,7 +91,7 @@ Table Club {
   Version Version [not null]
   Person_Club_vice_chairmanToPerson Person [not null]
   Contact_Contact_clubToClub Contact [not null]
-  member_list Member [not null]
+  Member Member [not null]
   Organization Organization [not null]
 }
 
@@ -76,6 +118,7 @@ Table Contact {
   blood_center Int
   donation Int
   hospital Int
+  Ambulance Ambulance [not null]
   BloodCenter_BloodCenter_contactToContact BloodCenter [not null]
   Club_Club_contactToContact Club [not null]
   BloodCenter_Contact_blood_centerToBloodCenter BloodCenter
@@ -86,7 +129,7 @@ Table Contact {
   Person_Contact_personToPerson Person
   Version Version [not null]
   Hospital_Hospital_contactToContact Hospital [not null]
-  Person Person [not null]
+  Person_Person_contact_idToContact Person [not null]
 }
 
 Table Country {
@@ -105,16 +148,21 @@ Table Country {
   }
 }
 
-Table Location {
-  id Int [pk, increment]
-  latitude Float [not null]
-  longitude Float [not null]
-  version String [not null, default: 'v1']
+Table Device {
+  id Int [pk]
   created_at DateTime
   updated_at DateTime
-  BloodCenter BloodCenter [not null]
-  Hospital Hospital [not null]
+  name String
+  mac_address String
+  model String
+  os String
+  os_version String
+  device_id String
+  brand String
+  manufacturer String
+  version String [not null]
   Version Version [not null]
+  LoginRecord LoginRecord [not null]
 }
 
 Table Donation {
@@ -132,211 +180,6 @@ Table Donation {
   Organization Organization [not null]
   Person Person [not null]
   Version Version [not null]
-}
-
-Table Member {
-  id Int [pk, increment]
-  created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
-  version String [not null, default: 'v1']
-  allergies String
-  complications String
-  medications String
-  blood_disorders String
-  club_id Int
-  infectious_diseases String
-  last_blood_donation DateTime
-  medical_conditions String
-  person_id Int
-  Donation Donation [not null]
-  Club Club
-  Person Person
-  Version Version [not null]
-  Request Request [not null]
-}
-
-Table Request {
-  id Int [pk, increment]
-  created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
-  health_issue String [not null]
-  blood_group BloodGroup [not null, default: 'A_POS']
-  quantity Int [not null, default: 1]
-  donation_type String [not null]
-  datetime DateTime [default: `now()`, not null]
-  hospital_name String [not null]
-  hospital_address String [not null]
-  hospital_phone String [not null]
-  hospital_email String [not null]
-  version String [not null, default: 'v1']
-  memberId Int
-  personId Int [not null]
-  referral Member
-  patient Person [not null]
-  Version Version [not null]
-}
-
-Table Support {
-  id Int [pk, increment]
-  created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
-  version String [not null, default: 'v1']
-  organization Int [not null]
-  messages String
-  status String
-  priority Int [not null]
-  subject String
-  Organization Organization [not null]
-  Version Version [not null]
-  SupportMessage SupportMessage [not null]
-}
-
-Table Team {
-  id Int [pk, increment]
-  created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
-  started_at DateTime [not null]
-  ended_at DateTime [not null]
-  organization Int [not null]
-  version String [not null, default: 'v1']
-  members Int [not null]
-  status String [not null]
-  Person Person [not null]
-  Person_Team_membersToPerson Person [not null]
-  Organization Organization [not null]
-  Version Version [not null]
-}
-
-Table User {
-  id Int [pk, increment]
-  username String [unique]
-  email String [unique, not null]
-  password String [not null]
-  status AccountStatus [not null, default: 'PENDING']
-  ip String [not null]
-  two_factor_auth Int [not null]
-  social_login Int [not null]
-  logins Int [not null]
-  person Int [not null]
-  settings Int [not null]
-  version String [not null, default: 'v1']
-  created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
-  securityQuestions SecurityQuestion [not null]
-  LoginRecord LoginRecord [not null]
-  Person Person [not null]
-  SocialMediaLinks SocialMediaLinks [not null]
-  TwoFactorAuth TwoFactorAuth [not null]
-  UserSettings UserSettings [not null]
-  Version Version [not null]
-  role UserRole [not null]
-}
-
-Table SecurityQuestion {
-  id Int [pk, increment]
-  question String [not null]
-  answer String [not null]
-  userId Int [not null]
-  created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
-  version String [not null, default: 'v1']
-  user User [not null]
-  Version Version [not null]
-}
-
-Table UserRole {
-  id Int [pk, increment]
-  name String [not null, default: 'user']
-  userId Int [not null]
-  created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
-  version String [not null, default: 'v1']
-  User User [not null]
-  Version Version [not null]
-}
-
-Table TwoFactorAuth {
-  id Int [pk, increment]
-  isEnabled Boolean [not null]
-  secretKey String
-  userId Int [not null]
-  created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
-  version String [not null, default: 'v1']
-  Version Version [not null]
-  User User [not null]
-}
-
-Table SocialMediaLinks {
-  id Int [pk, increment]
-  facebook String
-  twitter String
-  instagram String
-  userId Int [not null]
-  created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
-  version String [not null, default: 'v1']
-  Version Version [not null]
-  User User [not null]
-}
-
-Table LoginRecord {
-  id Int [pk, increment]
-  user Int [not null]
-  ip_address String [not null]
-  user_agent String [not null]
-  login_status String [not null]
-  session_id String
-  location String
-  authentication AuthenticationMethod
-  security_tokens String
-  logout_timestamp DateTime
-  version String [not null, default: 'v1']
-  created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
-  devices Int
-  Device Device
-  Version Version [not null]
-  OrganizationSettings OrganizationSettings [not null]
-  User User [not null]
-  UserSettings UserSettings [not null]
-}
-
-Table Person {
-  id Int [pk, increment]
-  created_at DateTime [default: `now()`, not null]
-  updated_at DateTime [not null]
-  first_name String [not null]
-  last_name String
-  father_name String
-  mother_name String
-  profession String
-  dob DateTime
-  gender Gender
-  version String [not null, default: 'v1']
-  avatar String
-  contact_id Int [not null]
-  teamId Int
-  bid String
-  driving String
-  nid String
-  passport String
-  Ambulance Ambulance [not null]
-  BloodCenter BloodCenter [not null]
-  Club_Club_chairmanToPerson Club [not null]
-  Club_Club_founderToPerson Club [not null]
-  Club_Club_vice_chairmanToPerson Club [not null]
-  Contact_Contact_personToPerson Contact [not null]
-  Donation Donation [not null]
-  Member Member [not null]
-  Organization Organization [not null]
-  contact Contact [not null]
-  Team Team
-  Version Version [not null]
-  Request Request [not null]
-  SupportMessage SupportMessage [not null]
-  Team_Team_membersToPerson Team [not null]
-  User User [not null]
 }
 
 Table Hospital {
@@ -369,34 +212,80 @@ Table Hospital {
   Version Version [not null]
 }
 
-Table UserSettings {
+Table Location {
+  id Int [pk, increment]
+  latitude Float [not null]
+  longitude Float [not null]
+  version String [not null, default: 'v1']
+  created_at DateTime
+  updated_at DateTime
+  Hospital Hospital [not null]
+  Version Version [not null]
+}
+
+Table LoginRecord {
+  id Int [pk, increment]
+  user Int [not null]
+  ip_address String [not null]
+  user_agent String [not null]
+  login_status String [not null]
+  session_id String
+  location String
+  authentication AuthenticationMethod
+  security_tokens String
+  logout_timestamp DateTime
+  version String [not null, default: 'v1']
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  devices Int
+  Device Device
+  Version Version [not null]
+  OrganizationSettings OrganizationSettings [not null]
+  User User [not null]
+  UserSettings UserSettings [not null]
+}
+
+Table Member {
   id Int [pk, increment]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
-  language Language [not null, default: 'ENGLISH']
-  time_format TimeFormat [not null, default: 'H12PM']
-  date_format DateFormat [not null, default: 'DY_MONTH_COMMA']
-  timezone Timezone [not null, default: 'GMT_06_Astana_Dhaka_Almaty_Urumqi']
-  theme Theme [default: 'LIGHT']
-  email_notifications Boolean [not null, default: true]
-  phone_notification Boolean [not null, default: true]
-  push_notifications Boolean [not null, default: true]
-  two_factor_auth Boolean
-  login_record_id Int [not null]
-  loginRecordId Int [not null]
-  high_contrast_mode Boolean
-  in_app_notifications Boolean [default: true]
-  key_board_shortcut Boolean
-  notification_frequency String
-  notification_sound String
-  notification_vibrate Boolean [default: true]
-  password_reset Boolean
-  security_answer String
-  security_question String
   version String [not null, default: 'v1']
-  User User [not null]
-  login_records LoginRecord [not null]
+  allergies String
+  complications String
+  medications String
+  blood_disorders String
+  club_id Int
+  infectious_diseases String
+  last_blood_donation DateTime
+  medical_conditions String
+  person_id Int
+  Donation Donation [not null]
+  Club Club
+  Person Person
   Version Version [not null]
+  Request Request [not null]
+}
+
+Table Organization {
+  id Int [pk, increment]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  org_type OrgType [not null]
+  org_id Int [not null]
+  Volunteer Json [not null]
+  personId Int [not null]
+  organizationSettingsId Int [not null]
+  clubId Int
+  version String [not null, default: 'v1']
+  Ambulance Ambulance [not null]
+  Donation Donation [not null]
+  Club Club
+  OrganizationSettings OrganizationSettings [not null]
+  Person Person [not null]
+  Version Version [not null]
+  Support Support [not null]
+  SupportMessage SupportMessage [not null]
+  Team Team [not null]
 }
 
 Table OrganizationSettings {
@@ -436,26 +325,104 @@ Table OrganizationSettings {
   Version Version [not null]
 }
 
-Table Organization {
+Table Person {
   id Int [pk, increment]
   created_at DateTime [default: `now()`, not null]
   updated_at DateTime [not null]
-  org_type OrgType [not null]
-  org_id Int [not null]
-  Volunteer Json [not null]
-  personId Int [not null]
-  organizationSettingsId Int [not null]
-  clubId Int
+  first_name String [not null]
+  last_name String
+  father_name String
+  mother_name String
+  profession String
+  dob DateTime
+  gender Gender
   version String [not null, default: 'v1']
+  avatar String
+  contact_id Int [not null]
+  teamId Int
+  bid String
+  driving String
+  nid String
+  passport String
   Ambulance Ambulance [not null]
+  BloodCenter BloodCenter [not null]
+  BloodDonation BloodDonation [not null]
+  Club_Club_chairmanToPerson Club [not null]
+  Club_Club_founderToPerson Club [not null]
+  Club_Club_vice_chairmanToPerson Club [not null]
+  Contact_Contact_personToPerson Contact [not null]
   Donation Donation [not null]
-  Club Club
-  settings OrganizationSettings [not null]
-  Ambassador Person [not null]
+  Member Member [not null]
+  Organization Organization [not null]
+  Contact_Person_contact_idToContact Contact [not null]
+  Team_Person_teamIdToTeam Team
   Version Version [not null]
-  Support Support [not null]
+  Request Request [not null]
   SupportMessage SupportMessage [not null]
-  Team Team [not null]
+  Team_Team_membersToPerson Team [not null]
+  User User [not null]
+}
+
+Table Request {
+  id Int [pk, increment]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  health_issue String [not null]
+  blood_group BloodGroup [not null, default: 'A_POS']
+  quantity Int [not null, default: 1]
+  donation_type String [not null]
+  datetime DateTime [default: `now()`, not null]
+  hospital_name String [not null]
+  hospital_address String [not null]
+  hospital_phone String [not null]
+  hospital_email String [not null]
+  version String [not null, default: 'v1']
+  memberId Int
+  personId Int [not null]
+  Member Member
+  Person Person [not null]
+  Version Version [not null]
+}
+
+Table SecurityQuestion {
+  id Int [pk, increment]
+  question String [not null]
+  answer String [not null]
+  userId Int [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  version String [not null, default: 'v1']
+  User User [not null]
+  Version Version [not null]
+  UserSettings UserSettings [not null]
+}
+
+Table SocialMediaLinks {
+  id Int [pk, increment]
+  facebook String
+  twitter String
+  instagram String
+  userId Int [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  version String [not null, default: 'v1']
+  Version Version [not null]
+  User User [not null]
+}
+
+Table Support {
+  id Int [pk, increment]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  version String [not null, default: 'v1']
+  organization Int [not null]
+  messages String
+  status String
+  priority Int [not null]
+  subject String
+  Organization Organization [not null]
+  Version Version [not null]
+  SupportMessage SupportMessage [not null]
 }
 
 Table SupportMessage {
@@ -473,6 +440,99 @@ Table SupportMessage {
   Version Version [not null]
 }
 
+Table Team {
+  id Int [pk, increment]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  started_at DateTime [not null]
+  ended_at DateTime [not null]
+  organization Int [not null]
+  version String [not null, default: 'v1']
+  members Int [not null]
+  status String [not null]
+  Person_Person_teamIdToTeam Person [not null]
+  Person_Team_membersToPerson Person [not null]
+  Organization Organization [not null]
+  Version Version [not null]
+}
+
+Table TwoFactorAuth {
+  id Int [pk, increment]
+  is_enabled Boolean [not null]
+  secret_key String
+  user_id Int [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  version String [not null, default: 'v1']
+  Version Version [not null]
+  User User [not null]
+}
+
+Table User {
+  id Int [pk, increment]
+  username String [unique]
+  email String [unique, not null]
+  password String [not null]
+  status AccountStatus [not null, default: 'PENDING']
+  ip String [not null]
+  two_factor_auth Int [not null]
+  social_login Int [not null]
+  logins Int [not null]
+  person Int [not null]
+  settings Int [not null]
+  version String [not null, default: 'v1']
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  SecurityQuestion SecurityQuestion [not null]
+  LoginRecord LoginRecord [not null]
+  Person Person [not null]
+  SocialMediaLinks SocialMediaLinks [not null]
+  TwoFactorAuth TwoFactorAuth [not null]
+  UserSettings UserSettings [not null]
+  Version Version [not null]
+  UserRole UserRole [not null]
+}
+
+Table UserRole {
+  id Int [pk, increment]
+  name String [not null, default: 'user']
+  user_id Int [not null]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  version String [not null, default: 'v1']
+  User User [not null]
+  Version Version [not null]
+}
+
+Table UserSettings {
+  id Int [pk, increment]
+  created_at DateTime [default: `now()`, not null]
+  updated_at DateTime [not null]
+  language Language [not null, default: 'ENGLISH']
+  time_format TimeFormat [not null, default: 'H12PM']
+  date_format DateFormat [not null, default: 'DY_MONTH_COMMA']
+  timezone Timezone [not null, default: 'GMT_06_Astana_Dhaka_Almaty_Urumqi']
+  theme Theme [default: 'LIGHT']
+  email_notifications Boolean [not null, default: true]
+  phone_notification Boolean [not null, default: true]
+  push_notifications Boolean [not null, default: true]
+  two_factor_auth Boolean
+  login_record_id Int [not null]
+  high_contrast_mode Boolean
+  in_app_notifications Boolean [default: true]
+  key_board_shortcut Boolean
+  notification_frequency String
+  notification_sound String
+  notification_vibrate Boolean [default: true]
+  password_reset Boolean
+  version String [not null, default: 'v1']
+  security_question Int
+  User User [not null]
+  LoginRecord LoginRecord [not null]
+  SecurityQuestion SecurityQuestion
+  Version Version [not null]
+}
+
 Table Version {
   id Int [unique, not null]
   slug String [unique, not null]
@@ -481,8 +541,9 @@ Table Version {
   created_at DateTime [not null]
   updated_at DateTime [not null]
   version String
-  Ambulance_Ambulance_versionToVersion Ambulance [not null]
+  Ambulance Ambulance [not null]
   BloodCenter BloodCenter [not null]
+  BloodDonation BloodDonation [not null]
   Club Club [not null]
   Contact Contact [not null]
   Country Country [not null]
@@ -511,46 +572,6 @@ Table Version {
   }
 }
 
-Table Device {
-  id Int [pk]
-  created_at DateTime
-  updated_at DateTime
-  name String
-  mac_address String
-  model String
-  os String
-  os_version String
-  device_id String
-  brand String
-  manufacturer String
-  version String [not null]
-  Version Version [not null]
-  LoginRecord LoginRecord [not null]
-}
-
-Enum Gender {
-  FEMALE
-  MALE
-  TRANS
-}
-
-Enum FacilityType {
-  HOSPITAL
-  CLINIC
-  OTHER
-}
-
-Enum BloodGroup {
-  A_POS
-  A_NEG
-  B_POS
-  B_NEG
-  AB_POS
-  AB_NEG
-  O_POS
-  O_NEG
-}
-
 Enum AccountStatus {
   PENDING
   ACTIVE
@@ -565,27 +586,15 @@ Enum AuthenticationMethod {
   TWITTER
 }
 
-Enum Theme {
-  LIGHT
-  DARK
-}
-
-Enum Language {
-  ENGLISH
-  BANGLA
-}
-
-Enum TimeFormat {
-  H12AM
-  H12PM
-  H24
-  H24S
-  H12NoS
-  H24NoS
-  H12S_AM
-  H12S_PM
-  H24S_AM
-  H24S_PM
+Enum BloodGroup {
+  A_POS
+  A_NEG
+  B_POS
+  B_NEG
+  AB_POS
+  AB_NEG
+  O_POS
+  O_NEG
 }
 
 Enum DateFormat {
@@ -599,6 +608,47 @@ Enum DateFormat {
   DY_MONTH_COMMA
   MON_DY_SPACE
   DY_MON_SPACE
+}
+
+Enum FacilityType {
+  HOSPITAL
+  CLINIC
+  OTHER
+}
+
+Enum Gender {
+  FEMALE
+  MALE
+  TRANS
+}
+
+Enum Language {
+  ENGLISH
+  BANGLA
+}
+
+Enum OrgType {
+  HOSPITAL
+  CLUB
+  CENTER
+}
+
+Enum Theme {
+  LIGHT
+  DARK
+}
+
+Enum TimeFormat {
+  H12AM
+  H12PM
+  H24
+  H24S
+  H12NoS
+  H24NoS
+  H12S_AM
+  H12S_PM
+  H24S_AM
+  H24S_PM
 }
 
 Enum Timezone {
@@ -635,15 +685,11 @@ Enum Timezone {
   GMT_13_Nuku_alofa
 }
 
-Enum OrgType {
-  HOSPITAL
-  CLUB
-  CENTER
-}
+Ref: Ambulance.contact > Contact.id [delete: No Action]
 
 Ref: Ambulance.organization > Organization.id
 
-Ref: Ambulance.person_id > Person.id
+Ref: Ambulance.person > Person.id
 
 Ref: Ambulance.version > Version.slug [delete: No Action]
 
@@ -651,9 +697,13 @@ Ref: BloodCenter.contact > Contact.id
 
 Ref: BloodCenter.founder > Person.id [delete: No Action]
 
-Ref: BloodCenter.location > Location.id
-
 Ref: BloodCenter.version > Version.slug [delete: No Action]
+
+Ref: BloodDonation.organization_id > BloodCenter.id [delete: No Action]
+
+Ref: BloodDonation.donor_id > Person.id [delete: No Action]
+
+Ref: BloodDonation.version > Version.slug [delete: No Action]
 
 Ref: Club.chairman > Person.id
 
@@ -681,7 +731,7 @@ Ref: Contact.version > Version.slug [delete: No Action]
 
 Ref: Country.version > Version.slug [delete: No Action]
 
-Ref: Location.version > Version.slug [delete: No Action]
+Ref: Device.version > Version.slug [delete: No Action]
 
 Ref: Donation.member > Member.id
 
@@ -691,11 +741,41 @@ Ref: Donation.person > Person.id
 
 Ref: Donation.version > Version.slug [delete: No Action]
 
+Ref: Hospital.contact - Contact.id
+
+Ref: Hospital.location > Location.id
+
+Ref: Hospital.version > Version.slug [delete: No Action]
+
+Ref: Location.version > Version.slug [delete: No Action]
+
+Ref: LoginRecord.devices > Device.id [delete: No Action]
+
+Ref: LoginRecord.version > Version.slug [delete: No Action]
+
 Ref: Member.club_id > Club.id
 
 Ref: Member.person_id > Person.id
 
 Ref: Member.version > Version.slug [delete: No Action]
+
+Ref: Organization.clubId > Club.id
+
+Ref: Organization.organizationSettingsId > OrganizationSettings.id
+
+Ref: Organization.personId > Person.id
+
+Ref: Organization.version > Version.slug [delete: No Action]
+
+Ref: OrganizationSettings.loginRecordId > LoginRecord.id
+
+Ref: OrganizationSettings.version > Version.slug [delete: No Action]
+
+Ref: Person.contact_id - Contact.id
+
+Ref: Person.teamId > Team.id
+
+Ref: Person.version > Version.slug [delete: No Action]
 
 Ref: Request.memberId > Member.id
 
@@ -703,15 +783,31 @@ Ref: Request.personId > Person.id
 
 Ref: Request.version > Version.slug [delete: No Action]
 
+Ref: SecurityQuestion.userId > User.id
+
+Ref: SecurityQuestion.version > Version.slug [delete: No Action]
+
+Ref: SocialMediaLinks.version > Version.slug [delete: No Action]
+
 Ref: Support.organization > Organization.id
 
 Ref: Support.version > Version.slug [delete: No Action]
+
+Ref: SupportMessage.author > Person.id [delete: No Action]
+
+Ref: SupportMessage.organization > Organization.id [delete: No Action]
+
+Ref: SupportMessage.support > Support.id [delete: No Action]
+
+Ref: SupportMessage.version > Version.slug [delete: No Action]
 
 Ref: Team.members - Person.id
 
 Ref: Team.organization > Organization.id
 
 Ref: Team.version > Version.slug [delete: No Action]
+
+Ref: TwoFactorAuth.version > Version.slug [delete: No Action]
 
 Ref: User.logins > LoginRecord.id [delete: Set Null]
 
@@ -725,56 +821,12 @@ Ref: User.settings > UserSettings.id
 
 Ref: User.version > Version.slug [delete: No Action]
 
-Ref: SecurityQuestion.userId > User.id
-
-Ref: SecurityQuestion.version > Version.slug [delete: No Action]
-
-Ref: UserRole.userId > User.id
+Ref: UserRole.user_id > User.id
 
 Ref: UserRole.version > Version.slug [delete: No Action]
 
-Ref: TwoFactorAuth.version > Version.slug [delete: No Action]
+Ref: UserSettings.login_record_id > LoginRecord.id
 
-Ref: SocialMediaLinks.version > Version.slug [delete: No Action]
-
-Ref: LoginRecord.devices > Device.id [delete: No Action]
-
-Ref: LoginRecord.version > Version.slug [delete: No Action]
-
-Ref: Person.contact_id - Contact.id
-
-Ref: Person.teamId > Team.id
-
-Ref: Person.version > Version.slug [delete: No Action]
-
-Ref: Hospital.contact - Contact.id
-
-Ref: Hospital.location > Location.id
-
-Ref: Hospital.version > Version.slug [delete: No Action]
-
-Ref: UserSettings.loginRecordId > LoginRecord.id
+Ref: UserSettings.security_question > SecurityQuestion.id [delete: No Action]
 
 Ref: UserSettings.version > Version.slug [delete: No Action]
-
-Ref: OrganizationSettings.loginRecordId > LoginRecord.id
-
-Ref: OrganizationSettings.version > Version.slug [delete: No Action]
-
-Ref: Organization.clubId > Club.id
-
-Ref: Organization.organizationSettingsId > OrganizationSettings.id
-
-Ref: Organization.personId > Person.id
-
-Ref: Organization.version > Version.slug [delete: No Action]
-
-Ref: SupportMessage.author > Person.id [delete: No Action]
-
-Ref: SupportMessage.organization > Organization.id [delete: No Action]
-
-Ref: SupportMessage.support > Support.id [delete: No Action]
-
-Ref: SupportMessage.version > Version.slug [delete: No Action]
-
-Ref: Device.version > Version.slug [delete: No Action]

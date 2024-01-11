@@ -1,7 +1,6 @@
-import * as z from "zod"
-import * as imports from "../prisma/null"
 import { OrgType } from "@prisma/client"
-import { CompleteAmbulance, RelatedAmbulanceSchema, CompleteDonation, RelatedDonationSchema, CompleteClub, RelatedClubSchema, CompleteOrganizationSettings, RelatedOrganizationSettingsSchema, CompletePerson, RelatedPersonSchema, CompleteVersion, RelatedVersionSchema, CompleteSupport, RelatedSupportSchema, CompleteSupportMessage, RelatedSupportMessageSchema, CompleteTeam, RelatedTeamSchema } from "./index"
+import * as z from "zod"
+// import { CompleteAmbulance, CompleteClub, CompleteDonation, CompleteOrganizationSettings, CompletePerson, CompleteSupport, CompleteSupportMessage, CompleteTeam, CompleteVersion } from "./index"
 
 // Helper schema for JSON fields
 type Literal = boolean | number | string
@@ -22,31 +21,31 @@ export const OrganizationSchema = z.object({
   version: z.string(),
 })
 
-export interface CompleteOrganization extends z.infer<typeof OrganizationSchema> {
-  Ambulance: CompleteAmbulance[]
-  Donation: CompleteDonation[]
-  Club?: CompleteClub | null
-  settings: CompleteOrganizationSettings
-  Ambassador: CompletePerson
-  Version: CompleteVersion
-  Support: CompleteSupport[]
-  SupportMessage: CompleteSupportMessage[]
-  Team: CompleteTeam[]
-}
+// export interface CompleteOrganization extends z.infer<typeof OrganizationSchema> {
+//   Ambulance: CompleteAmbulance[]
+//   Donation: CompleteDonation[]
+//   Club?: CompleteClun | null
+//   settings: CompleteOrganizationSettings
+//   Ambassador: CompletePerson
+//   Version: CompleteVersion
+//   Support: CompleteSupport[]
+//   SupportMessage: CompleteSupportMessage[]
+//   Team: CompleteTeam[]
+// }
 
 /**
  * RelatedOrganizationSchema contains all relations on your model in addition to the scalars
  *
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
-export const RelatedOrganizationSchema: z.ZodSchema<CompleteOrganization> = z.lazy(() => OrganizationSchema.extend({
-  Ambulance: RelatedAmbulanceSchema.array(),
-  Donation: RelatedDonationSchema.array(),
-  Club: RelatedClubSchema.nullish(),
-  settings: RelatedOrganizationSettingsSchema,
-  Ambassador: RelatedPersonSchema,
-  Version: RelatedVersionSchema,
-  Support: RelatedSupportSchema.array(),
-  SupportMessage: RelatedSupportMessageSchema.array(),
-  Team: RelatedTeamSchema.array(),
-}))
+// export const RelatedOrganizationSchema: z.ZodSchema<CompleteOrganization> = z.lazy(() => OrganizationSchema.extend({
+//   Ambulance: RelatedAmbulanceSchema.array(),
+//   Donation: RelatedDonationSchema.array(),
+//   Club: RelatedClubSchema.nullish(),
+//   settings: RelatedOrganizationSettingsSchema,
+//   Ambassador: RelatedPersonSchema,
+//   Version: RelatedVersionSchema,
+//   Support: RelatedSupportSchema.array(),
+//   SupportMessage: RelatedSupportMessageSchema.array(),
+//   Team: RelatedTeamSchema.array(),
+// }))

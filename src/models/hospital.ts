@@ -1,7 +1,6 @@
-import * as z from "zod"
-import * as imports from "../prisma/null"
 import { FacilityType } from "@prisma/client"
-import { CompleteContact, RelatedContactSchema, CompleteLocation, RelatedLocationSchema, CompleteVersion, RelatedVersionSchema } from "./index"
+import * as z from "zod"
+// import { CompleteContact, CompleteLocation, CompleteVersion, RelatedContactSchema, RelatedLocationSchema, RelatedVersionSchema } from "./index"
 
 export const HospitalSchema = z.object({
   id: z.number().int(),
@@ -29,21 +28,21 @@ export const HospitalSchema = z.object({
   chairman: z.number().int().nullish(),
 })
 
-export interface CompleteHospital extends z.infer<typeof HospitalSchema> {
-  Contact_Contact_hospitalToHospital: CompleteContact[]
-  Contact_Hospital_contactToContact?: CompleteContact | null
-  Location?: CompleteLocation | null
-  Version: CompleteVersion
-}
+// export interface CompleteHospital extends z.infer<typeof HospitalSchema> {
+//   Contact_Contact_hospitalToHospital: CompleteContact[]
+//   Contact_Hospital_contactToContact?: CompleteContact | null
+//   Location?: CompleteLocation | null
+//   Version: CompleteVersion
+// }
 
 /**
  * RelatedHospitalSchema contains all relations on your model in addition to the scalars
  *
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
-export const RelatedHospitalSchema: z.ZodSchema<CompleteHospital> = z.lazy(() => HospitalSchema.extend({
-  Contact_Contact_hospitalToHospital: RelatedContactSchema.array(),
-  Contact_Hospital_contactToContact: RelatedContactSchema.nullish(),
-  Location: RelatedLocationSchema.nullish(),
-  Version: RelatedVersionSchema,
-}))
+// export const RelatedHospitalSchema: z.ZodSchema<CompleteHospital> = z.lazy(() => HospitalSchema.extend({
+//   Contact_Contact_hospitalToHospital: RelatedContactSchema.array(),
+//   Contact_Hospital_contactToContact: RelatedContactSchema.nullish(),
+//   Location: RelatedLocationSchema.nullish(),
+//   Version: RelatedVersionSchema,
+// }))

@@ -2,7 +2,7 @@ import { Request } from 'express';
 import multer, { FileFilterCallback } from "multer";
 import multerS3 from 'multer-s3';
 import path from "path";
-import { s3client } from '../../services/aws.service';
+import { s3client } from '../services/aws.service';
 
 // Load configuration from environment variables
 const AWS_BUCKET_NAME = process.env.AWS_BUCKET_NAME || 'your-default-bucket-name';

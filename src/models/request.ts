@@ -1,7 +1,6 @@
-import * as z from "zod"
-import * as imports from "../prisma/null"
 import { BloodGroup } from "@prisma/client"
-import { CompleteMember, RelatedMemberSchema, CompletePerson, RelatedPersonSchema, CompleteVersion, RelatedVersionSchema } from "./index"
+import * as z from "zod"
+// import { CompleteMember, CompletePerson, CompleteVersion, RelatedMemberSchema, RelatedPersonSchema, RelatedVersionSchema } from "./index"
 
 export const RequestSchema = z.object({
   id: z.number().int(),
@@ -21,19 +20,19 @@ export const RequestSchema = z.object({
   personId: z.number().int(),
 })
 
-export interface CompleteRequest extends z.infer<typeof RequestSchema> {
-  referral?: CompleteMember | null
-  patient: CompletePerson
-  Version: CompleteVersion
-}
+// export interface CompleteRequest extends z.infer<typeof RequestSchema> {
+//   referral?: CompleteMember | null
+//   patient: CompletePerson
+//   Version: CompleteVersion
+// }
 
 /**
  * RelatedRequestSchema contains all relations on your model in addition to the scalars
  *
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
-export const RelatedRequestSchema: z.ZodSchema<CompleteRequest> = z.lazy(() => RequestSchema.extend({
-  referral: RelatedMemberSchema.nullish(),
-  patient: RelatedPersonSchema,
-  Version: RelatedVersionSchema,
-}))
+// export const RelatedRequestSchema: z.ZodSchema<CompleteRequest> = z.lazy(() => RequestSchema.extend({
+//   referral: RelatedMemberSchema.nullish(),
+//   patient: RelatedPersonSchema,
+//   Version: RelatedVersionSchema,
+// }))

@@ -25,16 +25,39 @@ export const createMemberController = catchAsync((req: Request, res: Response) =
 });
 
 
-export const getMembersController = catchAsync((req: Request, res: Response) => {
-    const result = getMembersService();
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+export const getMembersController = catchAsync(async (_req: Request, res: Response): Promise<void> => {
+    const result = await getMembersService();
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Fetched members successfully',
+        data: result
+    })
+})
+
+
+/**
+ * Retrieves the member controller.
+ *
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @return {void} Nothing is returned from this function.
+ */
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+export const getMemberController = catchAsync(async (req: Request, res: Response) => {
+    const { memberId } = req.params;
+
+    const result = await getMemberService(Number(memberId));
 
     sendResponse(res, {
         statusCode: 200,
         success: true,
-        message: 'Get members list',
+        message: 'Get a member',
         data: result
     })
-})
+});
 
 
 /**
@@ -48,7 +71,7 @@ export const updateMemberController = catchAsync((req: Request, res: Response) =
     const { memberId } = req.params;
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const result = updateMemberService(memberId, req.body);
+    const result = updateMemberService(Number(memberId), req.body);
 
     sendResponse(res, {
         statusCode: 200,
@@ -59,26 +82,6 @@ export const updateMemberController = catchAsync((req: Request, res: Response) =
 })
 
 
-/**
- * Retrieves the member controller.
- *
- * @param {Request} req - The request object.
- * @param {Response} res - The response object.
- * @return {void} Nothing is returned from this function.
- */
-export const getMemberController = catchAsync((req: Request, res: Response) => {
-    const { memberId } = req.params;
-
-    const result = getMemberService(memberId);
-
-    sendResponse(res, {
-        statusCode: 200,
-        success: true,
-        message: 'Get a member',
-        data: result
-    })
-});
-
 
 /**
  * Delete member controller function.
@@ -88,9 +91,11 @@ export const getMemberController = catchAsync((req: Request, res: Response) => {
  * @return {void}
  */
 export const deleteMemberController = catchAsync((req: Request, res: Response) => {
+    // TODO:
+    // - Need to add soft-delete.
     const { memberId } = req.params;
 
-    const result = deleteMemberService(memberId);
+    const result = deleteMemberService(Number(memberId));
 
     sendResponse(res, {
         statusCode: 200,

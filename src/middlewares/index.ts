@@ -7,7 +7,7 @@ import errorMiddleware from "./error.middleware";
 import jsonMiddleware from "./json.middleware";
 import loggerMiddleware from "./logger.middleware";
 import rateLimitMiddleware from "./rate-limit.middleware";
-import requestValidateMiddleware from "./request-validate.middleware";
+// import requestValidateMiddleware from "./request-validate.middleware";
 import staticDirMiddleware from "./staticDir.middleware";
 import urlEncodedMiddleware from "./url-encoded.middleware";
 
@@ -22,7 +22,7 @@ const middlewares: { middleware: RequestHandler | ErrorRequestHandler; descripti
   // { middleware: securityHeaderMiddleware, description: "Security Header." },  // Enhances security by setting HTTP headers.
   { middleware: staticDirMiddleware, description: "Static Directories." },  // Serves static files from specified directories.
   { middleware: urlEncodedMiddleware, description: "URL Encode Handler." },  // Handles URL encoded data.
-  { middleware: requestValidateMiddleware, description: "Request validator Handler." },  // Handles API request validation.
+  // { middleware: requestValidateMiddleware, description: "Global request validation Handler." },
 
   // Keep this middleware at the very bottom of the list.
   // Otherwise this will be bypassed automatically.

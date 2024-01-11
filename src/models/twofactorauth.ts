@@ -1,6 +1,5 @@
 import * as z from "zod"
-import * as imports from "../prisma/null"
-import { CompleteVersion, RelatedVersionSchema, CompleteUser, RelatedUserSchema } from "./index"
+// import { CompleteUser, CompleteVersion, RelatedUserSchema, RelatedVersionSchema } from "./index"
 
 export const TwoFactorAuthSchema = z.object({
   id: z.number().int(),
@@ -12,17 +11,17 @@ export const TwoFactorAuthSchema = z.object({
   version: z.string(),
 })
 
-export interface CompleteTwoFactorAuth extends z.infer<typeof TwoFactorAuthSchema> {
-  Version: CompleteVersion
-  User: CompleteUser[]
-}
+// export interface CompleteTwoFactorAuth extends z.infer<typeof TwoFactorAuthSchema> {
+//   Version: CompleteVersion
+//   User: CompleteUser[]
+// }
 
 /**
  * RelatedTwoFactorAuthSchema contains all relations on your model in addition to the scalars
  *
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
-export const RelatedTwoFactorAuthSchema: z.ZodSchema<CompleteTwoFactorAuth> = z.lazy(() => TwoFactorAuthSchema.extend({
-  Version: RelatedVersionSchema,
-  User: RelatedUserSchema.array(),
-}))
+// export const RelatedTwoFactorAuthSchema: z.ZodSchema<CompleteTwoFactorAuth> = z.lazy(() => TwoFactorAuthSchema.extend({
+//   Version: RelatedVersionSchema,
+//   User: RelatedUserSchema.array(),
+// }))

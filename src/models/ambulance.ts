@@ -1,6 +1,5 @@
 import * as z from "zod"
-import * as imports from "../prisma/null"
-import { CompleteOrganization, RelatedOrganizationSchema, CompletePerson, RelatedPersonSchema, CompleteVersion, RelatedVersionSchema } from "./index"
+// import { CompleteOrganization, CompletePerson, CompleteVersion, RelatedOrganizationSchema, RelatedPersonSchema, RelatedVersionSchema } from "./index"
 
 export const AmbulanceSchema = z.object({
   id: z.number().int(),
@@ -13,19 +12,19 @@ export const AmbulanceSchema = z.object({
   organization: z.number().int().nullish(),
 })
 
-export interface CompleteAmbulance extends z.infer<typeof AmbulanceSchema> {
-  Organization?: CompleteOrganization | null
-  Person: CompletePerson
-  Version_Ambulance_versionToVersion: CompleteVersion
-}
+// export interface CompleteAmbulance extends z.infer<typeof AmbulanceSchema> {
+//   Organization?: CompleteOrganization | null
+//   Person: CompletePerson
+//   Version_Ambulance_versionToVersion: CompleteVersion
+// }
 
 /**
  * RelatedAmbulanceSchema contains all relations on your model in addition to the scalars
  *
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
-export const RelatedAmbulanceSchema: z.ZodSchema<CompleteAmbulance> = z.lazy(() => AmbulanceSchema.extend({
-  Organization: RelatedOrganizationSchema.nullish(),
-  Person: RelatedPersonSchema,
-  Version_Ambulance_versionToVersion: RelatedVersionSchema,
-}))
+// export const RelatedAmbulanceSchema: z.ZodSchema<CompleteAmbulance> = z.lazy(() => AmbulanceSchema.extend({
+//   Organization: RelatedOrganizationSchema.nullish(),
+//   Person: RelatedPersonSchema,
+//   Version_Ambulance_versionToVersion: RelatedVersionSchema,
+// }))
