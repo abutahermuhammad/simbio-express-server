@@ -10,8 +10,9 @@ import { contactRoutes } from "../modules/contact/contact.route";
 // import { logRoutes } from "../modules/log/log.route";
 // import { memberRoutes } from "../modules/member/member.route";
 // import { notificationRoutes } from "../modules/notification/notification.route";
-import { rootRoutes } from "../modules/root/root.route";
+import { hospitalRoutes } from "./../modules/hospital/hospital.route";
 import { personRoutes } from "./../modules/person/person.route";
+import { rootRoutes } from "./../modules/root/root.route";
 // import { searchRoutes } from "../modules/search/search.route";
 // import { settingsRoutes } from "../modules/settings/settings.route";
 // import { supportRoutes } from "../modules/support/support.route";
@@ -76,6 +77,10 @@ const moduleRoutes = [
     //     path: "/events",
     //     route: eventRoutes,
     // },
+    {
+        path: "/hospitals",
+        route: hospitalRoutes,
+    },
     // {
     //     path: "/logs",
     //     route: logRoutes,

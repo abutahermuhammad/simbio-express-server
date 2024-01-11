@@ -12,16 +12,16 @@ generator dbml {
   output   = "../docs/dbml"
 }
 
-generator zod {
-  provider              = "zod-prisma"
-  output                = "./../models"
-  imports               = "null"
-  relationModel         = "true"
-  modelSuffix           = "Schema"
-  useDecimalJs          = "true"
-  prismaJsonNullability = "true"
-  modelCase             = "PascalCase"
-}
+// generator zod {
+//   provider              = "zod-prisma"
+//   output                = "./../models"
+//   imports               = "null"
+//   relationModel         = "true"
+//   modelSuffix           = "Schema"
+//   useDecimalJs          = "true"
+//   prismaJsonNullability = "true"
+//   modelCase             = "PascalCase"
+// }
 
 datasource db {
   provider = "postgresql"
