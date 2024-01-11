@@ -5,7 +5,7 @@ import { clubRoutes } from "../modules/club/club.route";
 // import { collectionRoutes } from "../modules/collectionCenter/collectionCenter.route";
 import { contactRoutes } from "../modules/contact/contact.route";
 // import { docRoutes } from "../modules/doc/doc.route";
-// import { donationRoutes } from "../modules/donation/donation.route";
+import { donationRoutes } from "../modules/donation/donation.route";
 // import { eventRoutes } from "../modules/event/event.route";
 // import { logRoutes } from "../modules/log/log.route";
 // import { memberRoutes } from "../modules/member/member.route";
@@ -74,10 +74,10 @@ const moduleRoutes = [
     //     path: "/doc",
     //     route: docRoutes,
     // },
-    // {
-    //     path: "/donations",
-    //     route: donationRoutes,
-    // },
+    {
+        path: "/donations",
+        route: donationRoutes,
+    },
     // {
     //     path: "/events",
     //     route: eventRoutes,
