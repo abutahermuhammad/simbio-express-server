@@ -10,6 +10,7 @@ import { contactRoutes } from "../modules/contact/contact.route";
 // import { logRoutes } from "../modules/log/log.route";
 // import { memberRoutes } from "../modules/member/member.route";
 // import { notificationRoutes } from "../modules/notification/notification.route";
+import { countryRoutes } from "./../modules/country/country.route";
 import { hospitalRoutes } from "./../modules/hospital/hospital.route";
 import { personRoutes } from "./../modules/person/person.route";
 import { rootRoutes } from "./../modules/root/root.route";
@@ -64,6 +65,10 @@ const moduleRoutes = [
     {
         path: "/contacts",
         route: contactRoutes,
+    },
+    {
+        path: "/countries",
+        route: countryRoutes,
     },
     // {
     //     path: "/doc",
