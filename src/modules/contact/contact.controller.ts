@@ -1,329 +1,138 @@
-import { Request, Response } from "express";
-import { AppError } from "./../../utils/appError";
-import sendResponse from "./../../utils/sendResponse.util";
+import httpStatus from "http-status";
+import catchAsync from "../../utils/catchAsync";
+import sendResponse from "../../utils/sendResponse.util";
+import { createContactService, deleteContactService, getContactService, getContactsService, updateContactService } from "./contact.service";
+import { TContact } from "./contact.validation";
+
 
 /**
- * Creates a contact controller.
+ * Creates a blood request controller.
  *
  * @param {Request} req - The request object.
  * @param {Response} res - The response object.
  * @return {void}
  */
-export function createContactController(req: Request, res: Response) {
-    try {
-        sendResponse(res, {
-            statusCode: 200,
-            success: true,
-            message: "Create a contact",
-            data: {},
-        });
-    } catch (error) {
-        throw new AppError();
-    }
-}
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+export const createContactController = catchAsync(async (req, res): Promise<void> => {
+    const payload = req.body as TContact;
 
-export function getContactsController(req: Request, res: Response) {
-    try {
-        sendResponse(res, {
-            statusCode: 200,
-            success: true,
-            message: "Get contacts list",
-            data: {},
-        });
-    } catch (error) {
-        throw new AppError();
-    }
-}
+    // Steps:
+    // 1. Validate the request body
+    // 2. Validate referral data with the database, if there is a mismatch, raise an update request for the `Referral` data in the admin panel.
+    // 3. Create `Contact` record with patient's contactal information.
+    // 3. Separate `Hospital` information from the request body and cross check data with the database. If there is a mismatch, raise an update request for the `Hospital` data in the admin panel.
+    // 4. Create `Request` record with `Contact` and `Hospital` information.
+
+    const result = await createContactService(payload);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Created blood request successfully",
+        data: result,
+    });
+});
+
 
 /**
- * Update contact controller.
+ * Controller function to handle GET request for all blood donation requests.
+ * @param _req - Express request object (unused).
+ * @param res - Express response object.
+ */
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+export const getContactsController = catchAsync(async (_req, res): Promise<void> => {
+    // Call the service to get all blood donation requests
+    const result = await getContactsService();
+
+    // If there are no blood donation requests, respond with a 404 Not Found status
+    if (result.data.length === 0) {
+        sendResponse(res, {
+            statusCode: httpStatus.NOT_FOUND,
+            success: false,
+            message: 'No blood requests found',
+            data: null
+        });
+        return;
+    }
+
+    // Respond with the fetched blood donation requests
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Fetched blood requests successfully',
+        data: result
+    })
+});
+
+
+/**
+ * Controller function to handle GET request for a blood donation request by ID.
+ *
+ * @param {Request} req -  Express request object.
+ * @param {Response} res - Express response object.
+ * @return {void}
+ */
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+export const getContactController = catchAsync(async (req, res) => {
+    const { contactId } = req.params;
+
+    // Call the service to get blood donation request data by ID
+    const result = await getContactService(Number(contactId))
+
+    // If the request data is not found, respond with a 404 Not Found status
+    if (!result) {
+        sendResponse(res, {
+            statusCode: httpStatus.NOT_FOUND,
+            success: false,
+            message: "Request not found",
+            data: null
+        });
+        return;
+    }
+
+    // Respond with the fetched blood donation request data
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Successfully fetched the request",
+        data: result,
+    });
+});
+
+
+export const updateContactController = catchAsync((req, res) => {
+    const { contactId } = req.params;
+    const payload = req.body as TContact;
+
+
+    const result = updateContactService(Number(contactId), payload);
+
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: 'Updated contact successfully.',
+        data: result
+    })
+})
+
+
+/**
+ * Delete blood request controller const.
  *
  * @param {Request} req - The request object.
  * @param {Response} res - The response object.
  * @return {void}
  */
-export function updateContactController(req: Request, res: Response) {
-    try {
-        sendResponse(res, {
-            statusCode: 200,
-            success: true,
-            message: "Update a contact",
-            data: {},
-        });
-    } catch (error) {
-        throw new AppError();
-    }
-}
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+export const deleteContactController = catchAsync(async (req, res): Promise<void> => {
+    const { contactId } = req.params;
 
-/**
- * Retrieves the contact controller.
- *
- * @param {Request} req - The request object.
- * @param {Response} res - The response object.
- * @return {void} Nothing is returned from this function.
- */
-export function getContactController(req: Request, res: Response) {
-    try {
-        sendResponse(res, {
-            statusCode: 200,
-            success: true,
-            message: "Get a contact",
-            data: {},
-        });
-    } catch (error) {
-        throw new AppError();
-    }
-}
+    const result = await deleteContactService(Number(contactId))
 
-/**
- * Delete contact controller function.
- *
- * @param {Request} req - The request object.
- * @param {Response} res - The response object.
- * @return {void}
- */
-export function deleteContactController(req: Request, res: Response) {
-    try {
-        sendResponse(res, {
-            statusCode: 200,
-            success: true,
-            message: "Delete a contact",
-            data: {},
-        });
-    } catch (error) {
-        throw new AppError();
-    }
-}
-
-
-import { omit } from "lodash";
-import prisma from '../prisma/prisma-client';
-import { ContactSchemaType, MinimalContactSchemaType } from "../src/models/contact.model";
-import { TRequestQuery } from "../src/models/request.model";
-import { debug } from "../src/utils/debug.util";
-
-/**
- * isExists
- * This function checks whether contact with a given id is exists or not.
- *
- * @param id
- * @returns
- *
- * @since 1.0.0
- */
-export const isExists = async (id: number) => {
-    try {
-        const isExists = await prisma.contact.findUnique({
-            where: {
-                id: id
-            }
-        })
-
-        return isExists ? true : false;
-    } catch (error) {
-        throw new Error('server error')
-    }
-}
-
-
-/**
- * Get Contacts
- * @param param0
- * @returns
- */
-export const getContacts = async ({
-    search = "",
-    filter = "",
-    q = "",
-    limit = "10",
-    offset = "0",
-    sortby = "id",
-    order = "asc",
-    include = "",
-    exclude = "",
-}:
-    Partial<TRequestQuery>
-) => {
-    debug('A request was made to the root endpoint');
-
-    try {
-        const contacts = await prisma.contact.findMany({
-            // query: search as string || filter as string || q as string,
-            skip: Number(offset),
-            take: Number(limit),
-            orderBy: {
-                [sortby]: order
-            },
-            where: {
-                OR: [
-                    {
-                        address_line: {
-                            contains: search || q,
-                        }
-                    },
-                    {
-                        address_line_1: {
-                            contains: search || q,
-                        }
-
-                    },
-                    {
-                        state: {
-                            contains: search || q,
-                        }
-
-                    },
-                    {
-                        city: {
-                            contains: search || q,
-                        }
-
-                    },
-                    {
-                        zip: {
-                            contains: search || q,
-                        }
-
-                    },
-                    {
-                        country: {
-                            contains: search || q,
-                        }
-
-                    },
-                    {
-                        phone: {
-                            contains: search || q,
-                        }
-
-                    },
-                    {
-                        phone_1: {
-                            contains: search || q,
-                        }
-
-                    },
-                    {
-                        fax: {
-                            contains: search || q,
-                        }
-
-                    },
-                    {
-                        email: {
-                            contains: search || q,
-                        }
-
-                    },
-                    {
-                        email_1: {
-                            contains: search || q,
-                        }
-
-                    }
-                ]
-            }
-        });
-
-        return contacts;
-    } catch (err) {
-        return err;
-    }
-
-    return [];
-}
-
-/**
- * Get Contacts
- * @param param0
- * @returns
- */
-export const createContact = async (data: MinimalContactSchemaType) => {
-    try {
-        const contact = await prisma.contact.create({
-            data: omit(data, ['id']),
-        });
-
-        return contact;
-    } catch (error) {
-        console.error("Error updating contact:", error);
-        throw new Error("Unable to update contact");
-    }
-}
-
-
-/**
- * getContactById
- * This will parse contact matched with given id.
- *
- * @param id
- * @returns
- *
- * @since 1.0.0
- */
-export const getContactById = async (id: number) => {
-    try {
-        const contact = await prisma.contact.findUnique({
-            where: {
-                id: id,
-            }
-        });
-
-        return contact;
-    } catch (error) {
-        throw new Error('server error')
-    }
-}
-
-
-/**
- * updateContactById
- * This will update a contact with respected id.
- *
- * @param id
- * @returns
- *
- * @since 1.0.0
- */
-export const updateContactById = async (id: number, data: ContactSchemaType) => {
-    try {
-
-        const contact = await prisma.contact.update({
-            where: {
-                id
-            },
-            data: omit(data, [`id`]),
-        });
-
-        return contact;
-    } catch (error) {
-        console.error("Error updating contact:", error);
-        throw new Error("Unable to update contact");
-    }
-}
-
-
-/**
- * deleteContactById
- * This will delete contact matched with given id.
- *
- * @param id
- * @returns
- *
- * @since 1.0.0
- */
-export const deleteContactById = async (id: number) => {
-    try {
-        const response = await prisma.contact.delete({
-            where: {
-                id: id
-            }
-        });
-
-        return response;
-    } catch (error) {
-        throw new Error('server error')
-    }
-}
-
-
+    sendResponse(res, {
+        statusCode: httpStatus.OK,
+        success: true,
+        message: "Delete blood request successfully",
+        data: result,
+    });
+})

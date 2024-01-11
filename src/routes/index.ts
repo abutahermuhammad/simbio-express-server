@@ -3,7 +3,7 @@ import { Router } from "express";
 import { bloodRequestRoutes } from "../modules/bloodRequest/bloodRequest.route";
 // import { clubRoutes } from "../modules/club/club.route";
 // import { collectionRoutes } from "../modules/collectionCenter/collectionCenter.route";
-// import { contactRoutes } from "../modules/contact/contact.route";
+import { contactRoutes } from "../modules/contact/contact.route";
 // import { docRoutes } from "../modules/doc/doc.route";
 // import { donationRoutes } from "../modules/donation/donation.route";
 // import { eventRoutes } from "../modules/event/event.route";
@@ -60,10 +60,10 @@ const moduleRoutes = [
     //     path: "/collection-centers",
     //     route: collectionRoutes,
     // },
-    // {
-    //     path: "/contacts",
-    //     route: contactRoutes,
-    // },
+    {
+        path: "/contacts",
+        route: contactRoutes,
+    },
     // {
     //     path: "/doc",
     //     route: docRoutes,
