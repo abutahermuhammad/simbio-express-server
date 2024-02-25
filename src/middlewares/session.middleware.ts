@@ -1,3 +1,4 @@
+import config from 'config';
 import session, { SessionOptions } from 'express-session';
 
 /**
@@ -11,13 +12,14 @@ import session, { SessionOptions } from 'express-session';
  */
 
 const options: SessionOptions = {
-  resave: true,
+  secret: "This is a secret",
+  resave: false,
   saveUninitialized: true,
-  secret: "",
   cookie: {
-    httpOnly: false,
-    sameSite: false,
-    maxAge: 24 * 60 * 60 * 1000, // Maximum age of the session cookie (24 hours)
+    secure: config.get('NODE_ENV') === 'production',
+    httpOnly: true,
+    sameSite: true,
+    maxAge: 1000 * 60 * 60 * 24, // Maximum age of the session cookie (24 hours)
   },
 
 }
