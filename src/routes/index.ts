@@ -10,6 +10,7 @@ import { donationRoutes } from "../modules/donation/donation.route";
 // import { logRoutes } from "../modules/log/log.route";
 // import { memberRoutes } from "../modules/member/member.route";
 // import { notificationRoutes } from "../modules/notification/notification.route";
+import { authRoutes } from "./../modules/auth/auth.route";
 import { countryRoutes } from "./../modules/country/country.route";
 import { hospitalRoutes } from "./../modules/hospital/hospital.route";
 import { personRoutes } from "./../modules/person/person.route";
@@ -46,10 +47,10 @@ const moduleRoutes = [
         path: "/",
         route: rootRoutes
     },
-    // {
-    //     path: "/auth",
-    //     route: authRoutes,
-    // },
+    {
+        path: "/auth",
+        route: authRoutes,
+    },
     {
         path: "/blood-requests",
         route: bloodRequestRoutes,

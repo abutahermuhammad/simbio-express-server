@@ -8,4 +8,5 @@ export const getRootController = catchAsync((req, res) => {
         statusCode: httpStatus.OK,
         message: "Servers running properly",
     })
+
 });

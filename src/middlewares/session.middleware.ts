@@ -1,4 +1,3 @@
-import config from 'config';
 import session, { SessionOptions } from 'express-session';
 
 /**
@@ -12,11 +11,12 @@ import session, { SessionOptions } from 'express-session';
  */
 
 const options: SessionOptions = {
-  secret: "This is a secret",
+  // Auto generated session secret.
+  secret: "This is a session secret",
   resave: false,
   saveUninitialized: true,
   cookie: {
-    secure: config.get('NODE_ENV') === 'production',
+    secure: false,
     httpOnly: true,
     sameSite: true,
     maxAge: 1000 * 60 * 60 * 24, // Maximum age of the session cookie (24 hours)

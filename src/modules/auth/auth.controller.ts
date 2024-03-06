@@ -1,6 +1,7 @@
-import { Request, Response } from "express"
-import { AppError } from "./../../utils/appError"
-import sendResponse from "./../../utils/sendResponse.util"
+import { Request, Response } from "express";
+import { AppError } from "./../../utils/appError";
+import sendResponse from "./../../utils/sendResponse.util";
+import { mockUsers } from "./auth.constant";
 
 
 export const registerController = (req: Request, res: Response) => {
@@ -8,7 +9,7 @@ export const registerController = (req: Request, res: Response) => {
         sendResponse(res, {
             statusCode: 200,
             success: true,
-            message: 'Register route',
+            message: 'User registered',
             data: {}
         })
     } catch (error) {
@@ -46,12 +47,24 @@ export const resendController = (req: Request, res: Response) => {
 
 
 export const loginController = (req: Request, res: Response) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const { query: { username, password } } = req;
     try {
+
+        const findUser = mockUsers.find(user => user.username === username)
+
+        if (!findUser || findUser.password !== password) return sendResponse(res, {
+            statusCode: 401,
+            success: false,
+            message: 'Bad credentials',
+            data: {}
+        })
+
         sendResponse(res, {
             statusCode: 200,
             success: true,
-            message: 'Login route',
-            data: {}
+            message: 'User registered',
+            data: findUser
         })
     } catch (error) {
         throw new AppError()

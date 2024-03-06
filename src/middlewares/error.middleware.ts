@@ -17,6 +17,7 @@ const globalErrorHandler: ErrorRequestHandler = (
   next: NextFunction
 ): void => {
   console.log("GLOBAL ERROR HANDLER")
+  console.log(error)
   let statusCode: number = error.statusCode || 500;
   let message: string = error.message || 'Something went wrong!';
   let errorSources: TErrorSources = [

@@ -23,7 +23,7 @@ const router = express.Router();
  */
 
 
-router.get('/register', registerController);
+router.post('/register', registerController);
 router.get('/verify', verifyController);
 router.get('/resend', resendController);
 router.get('/login', loginController);

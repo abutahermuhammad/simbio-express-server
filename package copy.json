@@ -2,10 +2,8 @@
     "name": "simbio-express-server",
     "version": "1.0.0",
     "description": "",
-    "author": "Abu Taher muhammad <at-mah.vercel.app",
-    "keywords": [],
-    "license": "ISC",
     "scripts": {
+        "postinstall": "tsc",
         "build": "npx tsc",
         "start": "node dist/index.js",
         "dev": "nodemon src/index.ts",
@@ -22,6 +20,9 @@
         "prisma:generate": "npx prisma generate",
         "prisma:doc": "npx prisma-docs-generator serve"
     },
+    "keywords": [],
+    "author": "Abu Taher muhammad <at-mah.vercel.app",
+    "license": "ISC",
     "dependencies": {
         "@aws-sdk/client-s3": "^3.409.0",
         "@types/compression": "^1.7.3",
