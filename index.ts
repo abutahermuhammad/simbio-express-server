@@ -35,6 +35,7 @@ initializeRoutes(app);
  *
  * @since 1.0.0
  */
+// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 initializeServer(app);
 
 

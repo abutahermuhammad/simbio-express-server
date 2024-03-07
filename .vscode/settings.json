@@ -44,5 +44,8 @@
     "Tokelau",
     "Verdean",
     "Viet"
-  ]
+  ],
+  "yaml.schemas": {
+    "https://json.schemastore.org/eslintrc.json": "file:///f%3A/personal/simbio-express-server/src/assets/oas.yaml"
+  }
 }
